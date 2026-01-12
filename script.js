@@ -10,6 +10,8 @@ let travelTime = 0; // in minutes
 let notificationShown = false;
 let pendingRequest = null;
 let isOrganizationView = false;
+let currentServiceType = null;
+let userPurpose = null;
 
 // Indian Data
 const INDIAN_CITIES = [
@@ -70,6 +72,7 @@ function initializeApp() {
     setupEventListeners();
     loadDemoData();
     checkAuthStatus();
+    startAppointmentMonitor();
 }
 
 // Setup event listeners
@@ -84,6 +87,7 @@ function setupEventListeners() {
     document.getElementById('providerLoginForm').addEventListener('submit', handleProviderLogin);
     document.getElementById('registerOrgForm').addEventListener('submit', handleRegisterOrg);
     document.getElementById('endQueueForm').addEventListener('submit', handleEndQueue);
+    document.getElementById('purposeForm').addEventListener('submit', handlePurposeSubmit);
 
     // Location search
     document.getElementById('locationSearch').addEventListener('input', handleLocationSearch);
@@ -373,7 +377,7 @@ function renderServices(services) {
                     ${service.queues.map(queue => `<span class="queue-tag">${queue}</span>`).join('')}
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="joinQueue(${service.id}, '${service.name}')">
+            <button class="btn btn-primary" onclick="joinQueue(${service.id}, '${service.name}', '${service.type}')">
                 Join Queue
             </button>
         `;
@@ -381,19 +385,85 @@ function renderServices(services) {
     });
 }
 
-function joinQueue(serviceId, serviceName) {
-    selectedService = { id: serviceId, name: serviceName };
+function joinQueue(serviceId, serviceName, serviceType) {
+    selectedService = { id: serviceId, name: serviceName, type: serviceType };
     currentQueueId = 'Q' + Date.now();
+    currentServiceType = serviceType;
 
-    // Show requesting message
+    closeModal('joinQueueModal');
+
+    // Check if it's bank or government - show purpose modal
+    if (serviceType === 'bank' || serviceType === 'government') {
+        showPurposeModal(serviceType);
+    } else {
+        // For hospitals, directly send request
+        proceedWithQueueRequest(serviceName);
+    }
+}
+
+function showPurposeModal(serviceType) {
+    const serviceTypeSelect = document.getElementById('serviceType');
+    serviceTypeSelect.innerHTML = '<option value="">Choose service...</option>';
+
+    if (serviceType === 'bank') {
+        const bankServices = [
+            'Cash Withdrawal',
+            'Cash Deposit',
+            'Account Opening',
+            'Loan Application',
+            'Card Services',
+            'Cheque Book Request',
+            'Account Statement',
+            'Other'
+        ];
+        bankServices.forEach(service => {
+            serviceTypeSelect.innerHTML += `<option value="${service}">${service}</option>`;
+        });
+    } else if (serviceType === 'government') {
+        const govServices = [
+            'Passport Application',
+            'Passport Renewal',
+            'Aadhaar Enrollment',
+            'Aadhaar Update',
+            'Driving License',
+            'PAN Card',
+            'Voter ID',
+            'Other'
+        ];
+        govServices.forEach(service => {
+            serviceTypeSelect.innerHTML += `<option value="${service}">${service}</option>`;
+        });
+    }
+
+    document.getElementById('purposeModal').style.display = 'block';
+}
+
+function updatePurposeOptions() {
+    // Can add dynamic fields based on service type if needed
+}
+
+function handlePurposeSubmit(e) {
+    e.preventDefault();
+
+    userPurpose = {
+        serviceType: document.getElementById('serviceType').value,
+        description: document.getElementById('purposeDescription').value,
+        documents: document.getElementById('documents').value
+    };
+
+    closeModal('purposeModal');
+    showNotification('Purpose saved! Sending request...', 'success');
+
+    setTimeout(() => {
+        proceedWithQueueRequest(selectedService.name);
+    }, 500);
+}
+
+function proceedWithQueueRequest(serviceName) {
     showNotification(`Sending request to join ${serviceName}...`, 'info');
 
     setTimeout(() => {
-        closeModal('joinQueueModal');
-        
-        // Send request to organization
         sendQueueRequest(serviceName);
-        
         showNotification('Request sent! Waiting for organization approval...', 'info');
     }, 1000);
 }
@@ -405,7 +475,8 @@ function sendQueueRequest(serviceName) {
         userPhone: currentUser ? currentUser.phone : '+91 9876543210',
         queueName: serviceName,
         time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        purpose: userPurpose
     };
     
     pendingRequest = request;
@@ -428,6 +499,15 @@ function showQueueRequestToOrganization(request) {
     document.getElementById('requestUserPhone').textContent = request.userPhone;
     document.getElementById('requestQueueName').textContent = request.queueName;
     document.getElementById('requestTime').textContent = request.time;
+    
+    // Add purpose info if available
+    const requestBody = document.querySelector('#queueRequestNotification .request-body');
+    if (request.purpose) {
+        const purposeInfo = `<p><strong>Purpose:</strong> ${request.purpose.serviceType}</p>`;
+        if (!requestBody.querySelector('.purpose-info')) {
+            requestBody.insertAdjacentHTML('beforeend', `<div class="purpose-info">${purposeInfo}</div>`);
+        }
+    }
     
     const popup = document.getElementById('queueRequestNotification');
     popup.style.display = 'flex';
@@ -667,6 +747,22 @@ function showQueueStatus() {
                     <div class="progress-text">4 people ahead</div>
                 </div>
             </div>
+            <div class="swap-section">
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
+                    <i class="fas fa-info-circle"></i> Stuck in traffic? Swap with next person to keep counter busy
+                </p>
+                <button class="btn btn-secondary btn-full" onclick="requestSwap()" id="swapBtn">
+                    <i class="fas fa-exchange-alt"></i> Request Swap Position
+                </button>
+            </div>
+            <div class="delay-section">
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
+                    <i class="fas fa-parking"></i> Can't find parking or need more time?
+                </p>
+                <button class="btn btn-secondary btn-full" onclick="requestDelay()" id="delayBtn">
+                    <i class="fas fa-clock"></i> Push Me 1 Person Back
+                </button>
+            </div>
             <div class="queue-actions">
                 <button class="btn btn-secondary" onclick="leaveQueue()">Leave Queue</button>
                 <button class="btn btn-primary" onclick="refreshQueue()">Refresh</button>
@@ -699,6 +795,82 @@ function refreshQueue() {
     setTimeout(() => {
         showNotification('Queue status updated!', 'success');
     }, 500);
+}
+
+function requestSwap() {
+    const swapBtn = document.getElementById('swapBtn');
+    const currentPos = parseInt(document.getElementById('currentPosition').textContent);
+
+    if (currentPos <= 2) {
+        showNotification('Cannot swap - you are next in line!', 'error');
+        return;
+    }
+
+    swapBtn.disabled = true;
+    swapBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Requesting...';
+
+    setTimeout(() => {
+        // Simulate swap - move position back by 1
+        const newPos = currentPos + 1;
+        document.getElementById('currentPosition').textContent = newPos;
+        
+        const waitTime = newPos * 3;
+        document.getElementById('estimatedWait').textContent = waitTime + ' minutes';
+        
+        const progress = ((5 - newPos) / 4) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+
+        showNotification('✅ Swap successful! Position moved to ' + newPos + '. Counter stays busy!', 'success');
+        
+        swapBtn.innerHTML = '<i class="fas fa-check"></i> Swapped';
+        swapBtn.style.background = '#10b981';
+        swapBtn.style.color = 'white';
+        
+        // Disable swap button after use
+        setTimeout(() => {
+            swapBtn.disabled = true;
+            swapBtn.innerHTML = '<i class="fas fa-check"></i> Already Swapped';
+        }, 2000);
+    }, 1500);
+}
+
+function requestDelay() {
+    const delayBtn = document.getElementById('delayBtn');
+    const currentPos = parseInt(document.getElementById('currentPosition').textContent);
+
+    if (currentPos === 1) {
+        showNotification('You are next! Cannot delay further. Please arrive soon.', 'error');
+        return;
+    }
+
+    delayBtn.disabled = true;
+    delayBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+    setTimeout(() => {
+        // Move position back by 1
+        const newPos = currentPos + 1;
+        document.getElementById('currentPosition').textContent = newPos;
+        
+        const waitTime = newPos * 3;
+        document.getElementById('estimatedWait').textContent = waitTime + ' minutes';
+        
+        const progress = ((5 - newPos) / 4) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+
+        showNotification('✅ Position delayed! You are now at position ' + newPos + '. Take your time!', 'success');
+        
+        delayBtn.innerHTML = '<i class="fas fa-check"></i> Delayed';
+        delayBtn.style.background = '#f59e0b';
+        delayBtn.style.color = 'white';
+        
+        // Re-enable after 2 minutes for another delay if needed
+        setTimeout(() => {
+            delayBtn.disabled = false;
+            delayBtn.innerHTML = '<i class="fas fa-clock"></i> Push Me 1 Person Back';
+            delayBtn.style.background = '';
+            delayBtn.style.color = '';
+        }, 120000); // 2 minutes
+    }, 1500);
 }
 
 // Live queue updates simulation
@@ -811,6 +983,7 @@ function showProviderDashboard() {
                         <div class="counter-status active">Active</div>
                         <div class="current-customer">Serving: Patient #12</div>
                         <button class="btn btn-primary" onclick="callNext(1)">Call Next</button>
+                        <button class="btn btn-secondary" onclick="completeService('Patient #12', 1)" style="margin-top: 10px;">Complete Service</button>
                     </div>
                     <div class="counter-card">
                         <h4>Lab Tests</h4>
@@ -842,6 +1015,89 @@ function closeProviderDashboard() {
 function callNext(counterId) {
     showNotification(`Calling next customer to Counter ${counterId}`, 'success');
     // In real app, this would send notification to customer
+}
+
+// Service Completion & Handoff Functions
+function completeService(patientName, counterId) {
+    currentPatient = { name: patientName, counterId: counterId };
+    document.getElementById('completePatientName').textContent = patientName;
+    document.getElementById('completeServiceModal').style.display = 'block';
+}
+
+function showHandoffOptions() {
+    document.getElementById('handoffOptions').style.display = 'block';
+}
+
+function completeWithoutHandoff() {
+    closeModal('completeServiceModal');
+    showNotification(`${currentPatient.name} service completed successfully!`, 'success');
+    currentPatient = null;
+}
+
+function completeWithHandoff() {
+    const nextService = document.getElementById('nextService').value;
+    
+    if (!nextService) {
+        showNotification('Please select next service', 'error');
+        return;
+    }
+
+    closeModal('completeServiceModal');
+    
+    // Show handoff process
+    showNotification(`Completing service for ${currentPatient.name}...`, 'info');
+    
+    setTimeout(() => {
+        showNotification(`✅ ${currentPatient.name} automatically added to ${nextService} queue!`, 'success');
+        
+        // Notify user about handoff
+        setTimeout(() => {
+            notifyUserHandoff(nextService);
+        }, 1000);
+        
+        currentPatient = null;
+        document.getElementById('nextService').value = '';
+        document.getElementById('handoffOptions').style.display = 'none';
+    }, 1500);
+}
+
+function notifyUserHandoff(nextService) {
+    // Create handoff notification for user
+    const notification = document.createElement('div');
+    notification.className = 'notification handoff-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fas fa-arrow-right" style="font-size: 24px; color: #10b981;"></i>
+                <div>
+                    <strong style="display: block; margin-bottom: 5px; color: #10b981;">Service Completed!</strong>
+                    <span>You've been automatically added to <strong>${nextService}</strong> queue. Position: 3</span>
+                </div>
+            </div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Update queue status if open
+    const queueStatus = document.getElementById('queueStatus');
+    if (queueStatus) {
+        const header = queueStatus.querySelector('.queue-header h3');
+        if (header) {
+            header.textContent = `${nextService} - Charitable Hospital Mohali`;
+        }
+        document.getElementById('currentPosition').textContent = '3';
+        document.getElementById('estimatedWait').textContent = '9 minutes';
+        document.getElementById('progressFill').style.width = '40%';
+    }
+
+    // Auto remove after 8 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 8000);
 }
 
 // UI updates

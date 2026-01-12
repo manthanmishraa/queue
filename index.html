@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKIPIT - भारत में डिजिटल क्यू प्रबंधन | Digital Queue Management India</title>
+    <title>SKIPIT - Digital Queue Management for India | Skip The Queue, Save Your Time</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -28,18 +28,33 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="gradient-blob blob-1"></div>
+            <div class="gradient-blob blob-2"></div>
+            <div class="gradient-blob blob-3"></div>
+        </div>
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">Skip the Queue, Save Your Time</h1>
-                <p class="hero-subtitle">Join digital queues at banks, hospitals, and government offices across India. Real-time tracking and automated notifications.</p>
+                <p class="hero-subtitle">Join digital queues at banks, hospitals, and government offices across India. Real-time tracking, instant notifications, and zero waiting hassle.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary btn-large" onclick="showJoinQueueModal()">Join Queue</button>
-                    <button class="btn btn-secondary btn-large" onclick="showQRScanModal()">Scan QR Code</button>
-                    <button class="btn btn-secondary btn-large" onclick="showProviderModal()">For Providers</button>
+                    <button class="btn btn-primary btn-large" onclick="showJoinQueueModal()">
+                        <i class="fas fa-play-circle"></i> Join Queue Now
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="showQRScanModal()">
+                        <i class="fas fa-qrcode"></i> Scan QR Code
+                    </button>
+                </div>
+                <div class="hero-trust">
+                    <span><i class="fas fa-check-circle"></i> 50K+ Active Users</span>
+                    <span><i class="fas fa-check-circle"></i> 1000+ Providers</span>
+                    <span><i class="fas fa-check-circle"></i> 50+ Indian Cities</span>
                 </div>
             </div>
             <div class="hero-image">
                 <div class="phone-mockup">
+                    <div class="phone-camera"></div>
+                    <div class="phone-speaker"></div>
                     <div class="phone-screen">
                         <div class="app-preview">
                             <div class="app-header">
@@ -47,7 +62,7 @@
                                 <span>SKIPIT</span>
                             </div>
                             <div class="queue-status">
-                                <div class="position">Your Position: <span id="demo-position">5</span></div>
+                                <div class="position">Position: <span id="demo-position">5</span></div>
                                 <div class="wait-time">Est. Wait: <span id="demo-wait">15 mins</span></div>
                                 <div class="progress-bar">
                                     <div class="progress-fill" style="width: 60%"></div>
@@ -63,28 +78,46 @@
     <!-- Services Section -->
     <section id="services" class="services">
         <div class="container">
-            <h2 class="section-title">Our Services in India</h2>
+            <div class="section-header">
+                <h2 class="section-title">Services Available Across India</h2>
+                <p class="section-subtitle">Join digital queues at your preferred service provider in 50+ Indian cities</p>
+            </div>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="service-icon">
+                    <div class="service-icon-box">
                         <i class="fas fa-university"></i>
                     </div>
-                    <h3>Banking 🏦</h3>
-                    <p>Join digital queues at major Indian banks - SBI, HDFC, ICICI, Axis Bank, Kotak Mahindra, and more. For cash withdrawal, deposits, account services, and loans.</p>
+                    <h3>Banking Services 🏦</h3>
+                    <p>Digital queues at major Indian banks</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> SBI, HDFC, ICICI, Axis</li>
+                        <li><i class="fas fa-check"></i> Kotak, YES Bank, IndusInd</li>
+                        <li><i class="fas fa-check"></i> Cash, Deposits, Account Services</li>
+                    </ul>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">
+                    <div class="service-icon-box">
                         <i class="fas fa-hospital"></i>
                     </div>
-                    <h3>Healthcare 🏥</h3>
-                    <p>Skip long waits at major hospitals in India including Apollo, Max, Fortis, Manipal, and government hospitals for consultations, lab tests, and appointments.</p>
+                    <h3>Healthcare Services 🏥</h3>
+                    <p>Skip waiting at major hospitals</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> Apollo, Max, Fortis, Manipal</li>
+                        <li><i class="fas fa-check"></i> Government Hospitals</li>
+                        <li><i class="fas fa-check"></i> Consultations, Tests & Appointments</li>
+                    </ul>
                 </div>
                 <div class="service-card">
-                    <div class="service-icon">
+                    <div class="service-icon-box">
                         <i class="fas fa-building"></i>
                     </div>
                     <h3>Government Services 🏛️</h3>
-                    <p>Digital queues for Passport offices, Aadhaar enrollment, Driving License, PAN, Voter ID, and all government service centers across India.</p>
+                    <p>Digital queues for all government offices</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> Passport, Aadhaar, Driving License</li>
+                        <li><i class="fas fa-check"></i> PAN, Voter ID, Registration</li>
+                        <li><i class="fas fa-check"></i> All Government Service Centers</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -93,27 +126,45 @@
     <!-- Features Section -->
     <section class="features">
         <div class="container">
-            <h2 class="section-title">How It Works</h2>
+            <div class="section-header">
+                <h2 class="section-title">How It Works in 4 Easy Steps</h2>
+                <p class="section-subtitle">From registration to getting your turn - a seamless digital queue experience</p>
+            </div>
             <div class="features-grid">
                 <div class="feature-item">
                     <div class="feature-number">1</div>
                     <h3>Register & Verify</h3>
-                    <p>Sign up with your Indian phone number (10-digit) and get OTP verification. Complete your profile with state and city details.</p>
+                    <p>Sign up with your 10-digit Indian phone number and verify via OTP. Complete your profile in seconds.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
                 </div>
+                <div class="feature-connector"></div>
                 <div class="feature-item">
                     <div class="feature-number">2</div>
                     <h3>Find Services</h3>
-                    <p>Use GPS to discover nearby service providers across Indian cities, states, or search for specific locations and services.</p>
+                    <p>Use GPS to discover nearby providers or search specific locations, banks, hospitals across 50+ Indian cities.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-map-location-dot"></i>
+                    </div>
                 </div>
+                <div class="feature-connector"></div>
                 <div class="feature-item">
                     <div class="feature-number">3</div>
                     <h3>Join Queue</h3>
-                    <p>Join digital queues remotely from your home or scan QR codes at physical locations to get your token number instantly.</p>
+                    <p>Join digital queues remotely from home or scan QR codes at locations. Get your token number instantly.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket"></i>
+                    </div>
                 </div>
+                <div class="feature-connector"></div>
                 <div class="feature-item">
                     <div class="feature-number">4</div>
                     <h3>Track & Wait</h3>
-                    <p>Monitor your position in real-time with live updates, estimated wait times, and SMS notifications in Hindi/English.</p>
+                    <p>Monitor real-time position updates, receive SMS notifications when it's your turn. Bilingual support (Hindi/English).</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -122,24 +173,30 @@
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <div class="about-content">
+            <div class="about-wrapper">
                 <div class="about-text">
-                    <h2>About SKIPIT India</h2>
-                    <p>SKIPIT revolutionizes queue management across India by eliminating physical waiting lines. Our digital platform allows users to join queues remotely, track their position in real-time, and receive automated notifications when it's their turn.</p>
-                    <p>We operate across major Indian cities including Delhi, Mumbai, Bangalore, Chennai, Hyderabad, Pune, Kolkata, and 50+ other cities. For service providers, we offer comprehensive dashboards to manage multiple counters, track customer flow, and optimize service delivery.</p>
+                    <h2>Why Choose SKIPIT?</h2>
+                    <p>SKIPIT revolutionizes queue management across India by eliminating physical waiting lines at banks, hospitals, and government offices. Our secure, user-friendly platform enables customers to join queues remotely, track their position in real-time, and receive instant notifications when it's their turn.</p>
+                    <p>Operating in major Indian cities including Delhi, Mumbai, Bangalore, Chennai, Hyderabad, Pune, Kolkata, and 45+ more, SKIPIT serves as a bridge between customers and service providers, optimizing service delivery and enhancing customer satisfaction.</p>
+                    <button class="btn btn-primary" onclick="showProviderModal()" style="margin-top: 20px;">
+                        <i class="fas fa-building"></i> For Service Providers
+                    </button>
                 </div>
                 <div class="about-stats">
-                    <div class="stat">
-                        <div class="stat-number">50K+</div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="50000">50K+</div>
                         <div class="stat-label">Active Users</div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-number">1000+</div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="1000">1000+</div>
                         <div class="stat-label">Service Providers</div>
+                        <div class="stat-icon"><i class="fas fa-store"></i></div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-number">50+</div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="50">50+</div>
                         <div class="stat-label">Indian Cities</div>
+                        <div class="stat-icon"><i class="fas fa-city"></i></div>
                     </div>
                 </div>
             </div>
@@ -221,6 +278,7 @@
                 <div class="provider-options">
                     <button class="btn btn-primary btn-full" onclick="showRegisterOrgModal()">Register Organization</button>
                     <button class="btn btn-secondary btn-full" onclick="showManageQueuesModal()">Manage Queues</button>
+                    <button class="btn btn-secondary btn-full" onclick="showAnalyticsDashboard()">Analytics Dashboard</button>
                 </div>
             </div>
         </div>
@@ -420,6 +478,36 @@
         </div>
     </div>
 
+    <!-- Purpose Modal -->
+    <div id="purposeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tell Us Your Purpose</h3>
+                <span class="modal-close" onclick="closeModal('purposeModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">To save time, briefly tell us what you need:</p>
+                <form id="purposeForm">
+                    <div class="form-group">
+                        <label>Select Service Type</label>
+                        <select id="serviceType" required onchange="updatePurposeOptions()">
+                            <option value="">Choose service...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brief Description (Optional)</label>
+                        <textarea id="purposeDescription" rows="3" placeholder="E.g., Need to update address, apply for new card, etc." style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Documents you have (Optional)</label>
+                        <input type="text" id="documents" placeholder="E.g., Aadhaar, PAN, Passport">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Submit & Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Generate QR Modal -->
     <div id="generateQRModal" class="modal">
         <div class="modal-content">
@@ -431,6 +519,39 @@
                 <div id="qrCodeContainer" style="text-align: center; margin: 20px 0;"></div>
                 <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">Users can scan this QR code to join the queue</p>
                 <button class="btn btn-primary btn-full" onclick="downloadQR()">Download QR Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Service Modal -->
+    <div id="completeServiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Complete Service</h3>
+                <span class="modal-close" onclick="closeModal('completeServiceModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">Patient: <strong id="completePatientName"></strong></p>
+                <div class="form-group">
+                    <label>Does patient need additional services?</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="completeWithoutHandoff()" style="flex: 1;">No, Complete</button>
+                        <button class="btn btn-primary" onclick="showHandoffOptions()" style="flex: 1;">Yes, Handoff</button>
+                    </div>
+                </div>
+                <div id="handoffOptions" style="display: none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Select Next Service</label>
+                        <select id="nextService" class="form-control">
+                            <option value="">Choose service...</option>
+                            <option value="Pharmacy">Pharmacy</option>
+                            <option value="Lab Tests">Lab Tests</option>
+                            <option value="X-Ray">X-Ray</option>
+                            <option value="Billing">Billing</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="completeWithHandoff()">Complete & Handoff</button>
+                </div>
             </div>
         </div>
     </div>
@@ -463,5 +584,6 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="analytics.js"></script>
 </body>
 </html>
