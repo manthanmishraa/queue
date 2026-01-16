@@ -1414,3 +1414,108 @@ const notificationStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = notificationStyles;
 document.head.appendChild(styleSheet);
+
+// New Modal Functions
+function showSignupModal() {
+    alert('Welcome to SKIPIT! 🎉\n\nFree 14-day trial started.\n\nYou will receive an SMS shortly with your registration link.\n\nPhone: Your registered number\nValidity: 14 days\nAll features unlocked!');
+    showAuthModal();
+}
+
+function contactSales() {
+    alert('Contact Sales Team\n\nEmail: sales@skipit.in\nPhone: +91-XXXX-XXXX-XXX\nWhatsApp: +91-XXXX-XXXX-XXX\n\nOur team will get back to you within 2 hours.');
+}
+
+function showProviderModal() {
+    alert('Provider Dashboard\n\nManage your organization:\n✓ Multiple locations\n✓ Staff management\n✓ Queue monitoring\n✓ Analytics & Reports\n✓ Customer communication\n\nRegister your organization now!');
+    showAuthModal();
+}
+
+// Pricing CTA handlers
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to pricing buttons
+    const pricingButtons = document.querySelectorAll('.pricing-card .btn');
+    pricingButtons.forEach(button => {
+        if (button.textContent.includes('Get Started') || button.textContent.includes('Contact Sales')) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.textContent.includes('Get Started')) {
+                    showSignupModal();
+                } else {
+                    contactSales();
+                }
+            });
+        }
+    });
+
+    // Auto-update demo queue position
+    updateDemoQueue();
+    setInterval(updateDemoQueue, 5000);
+});
+
+function updateDemoQueue() {
+    let position = parseInt(document.getElementById('demo-position').textContent);
+    if (position > 1) {
+        position--;
+        document.getElementById('demo-position').textContent = position;
+        
+        let wait = parseInt(document.getElementById('demo-wait').textContent);
+        if (wait > 3) wait -= 2;
+        document.getElementById('demo-wait').textContent = wait + ' mins';
+        
+        let progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            let newWidth = 100 - (position * 15);
+            if (newWidth > 100) newWidth = 100;
+            progressFill.style.width = newWidth + '%';
+        }
+    }
+}
+
+// Sidebar Navigation Functions
+function showDashboard() {
+    console.log('Dashboard clicked');
+    alert('📊 Dashboard View\n\nView all your active queues and real-time metrics at a glance. Track queue positions, wait times, and service availability across locations.');
+}
+
+function showQueuesModal() {
+    console.log('Queues clicked');
+    let queueList = 'Your Active Queues:\n\n';
+    queueList += '1. SBI Bank Mumbai - Position 12\n';
+    queueList += '   Wait Time: ~18 minutes\n';
+    queueList += '   Status: Active\n\n';
+    queueList += '2. Apollo Hospital - Position 8\n';
+    queueList += '   Wait Time: ~12 minutes\n';
+    queueList += '   Status: Active\n\n';
+    queueList += '3. Passport Office Delhi - Position 15\n';
+    queueList += '   Wait Time: ~25 minutes\n';
+    queueList += '   Status: Waiting';
+    alert(queueList);
+}
+
+function showAnalyticsModal() {
+    console.log('Analytics clicked');
+    let analytics = '📈 Your Queue Analytics\n\n';
+    analytics += 'Total Queues Joined: 156\n';
+    analytics += 'Average Wait Time: 12 minutes\n';
+    analytics += 'Total Time Saved: 28 hours\n';
+    analytics += 'Cancellations: 5\n\n';
+    analytics += 'Most Used Services:\n';
+    analytics += '1. Banking - 45%\n';
+    analytics += '2. Healthcare - 35%\n';
+    analytics += '3. Government - 20%';
+    alert(analytics);
+}
+
+function showSettingsModal() {
+    console.log('Settings clicked');
+    let settings = '⚙️ Settings\n\n';
+    settings += 'Account Settings:\n';
+    settings += '• Email Notifications: ON\n';
+    settings += '• SMS Alerts: ON\n';
+    settings += '• Push Notifications: ON\n\n';
+    settings += 'Preferences:\n';
+    settings += '• Language: English\n';
+    settings += '• Theme: Light Mode\n';
+    settings += '• Queue Reminders: 5 min before';
+    alert(settings);
+}

@@ -14,7 +14,6 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <i class="fas fa-clock"></i>
                 <span>SKIPIT</span>
             </div>
             <div class="nav-links">
@@ -52,20 +51,106 @@
                 </div>
             </div>
             <div class="hero-image">
-                <div class="phone-mockup">
-                    <div class="phone-camera"></div>
-                    <div class="phone-speaker"></div>
-                    <div class="phone-screen">
-                        <div class="app-preview">
-                            <div class="app-header">
-                                <i class="fas fa-clock"></i>
-                                <span>SKIPIT</span>
+                <div class="modern-interface-mockup">
+                    <div class="interface-header">
+                        <div class="header-brand">SKIPIT</div>
+                        <div class="header-menu">
+                            <i class="fas fa-bell"></i>
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="interface-body">
+                        <!-- Left Sidebar -->
+                        <div class="interface-sidebar">
+                            <div class="sidebar-item active" onclick="showDashboard()">
+                                <i class="fas fa-layout"></i>
+                                <span>Dashboard</span>
                             </div>
-                            <div class="queue-status">
-                                <div class="position">Position: <span id="demo-position">5</span></div>
-                                <div class="wait-time">Est. Wait: <span id="demo-wait">15 mins</span></div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 60%"></div>
+                            <div class="sidebar-item" onclick="showQueuesModal()">
+                                <i class="fas fa-bars"></i>
+                                <span>Queues</span>
+                            </div>
+                            <div class="sidebar-item" onclick="showAnalyticsModal()">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </div>
+                            <div class="sidebar-item" onclick="showSettingsModal()">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </div>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="interface-main">
+                            <div class="content-header">
+                                <h2>Queue Overview</h2>
+                                <p>Real-time status across all locations</p>
+                            </div>
+
+                            <!-- Metrics Row -->
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-icon active-customers">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Active Customers</p>
+                                        <p class="metric-value">1,248</p>
+                                    </div>
+                                </div>
+
+                                <div class="metric-card">
+                                    <div class="metric-icon avg-wait">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Avg Wait Time</p>
+                                        <p class="metric-value">8 min</p>
+                                    </div>
+                                </div>
+
+                                <div class="metric-card">
+                                    <div class="metric-icon satisfaction">
+                                        <i class="fas fa-smile"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Satisfaction</p>
+                                        <p class="metric-value">96%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Queue List -->
+                            <div class="queue-list-section">
+                                <h3>Active Locations</h3>
+                                <div class="queue-list-items">
+                                    <div class="list-item">
+                                        <div class="item-icon">SB</div>
+                                        <div class="item-details">
+                                            <p class="item-name">SBI Bank Mumbai</p>
+                                            <p class="item-status">12 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
+
+                                    <div class="list-item">
+                                        <div class="item-icon ah">AH</div>
+                                        <div class="item-details">
+                                            <p class="item-name">Apollo Hospital</p>
+                                            <p class="item-status">8 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
+
+                                    <div class="list-item">
+                                        <div class="item-icon po">PO</div>
+                                        <div class="item-details">
+                                            <p class="item-name">Passport Office Delhi</p>
+                                            <p class="item-status">15 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -203,8 +288,402 @@
         </div>
     </section>
 
+    <!-- Problem Statement Section -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="problem-content">
+                <h2>Did you know?</h2>
+                <p class="problem-stat">7 out of 10 customers won't return after a poor service experience</p>
+                <p class="problem-description">Long waits, scheduling chaos, and impersonal interactions aren't just frustrating—they're lost opportunities. SKIPIT helps you increase customer retention, transform your operations, and keep customers coming back.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section class="industries-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Solutions for Every Industry</h2>
+                <p class="section-subtitle">SKIPIT adapts to your business needs across all sectors</p>
+            </div>
+            <div class="industries-grid">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <h3>Retail & Luxury</h3>
+                    <p>Premium customer experiences with VIP management, appointment scheduling, and personalized service flows.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Retail Chains</h3>
+                    <p>Manage multiple store locations efficiently with centralized control and real-time queue visibility across all branches.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>Government</h3>
+                    <p>Streamline citizen services, reduce wait times at offices, and improve operational efficiency with digital queues.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Education</h3>
+                    <p>Manage admission queues, counseling appointments, and registration processes with ease and transparency.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>Healthcare</h3>
+                    <p>HIPAA-compliant queue management for clinics, hospitals, and diagnostic centers with privacy protection.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Other Services</h3>
+                    <p>From banking to hospitality, SKIPIT adapts to any business requiring efficient customer flow management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products/Features Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">All-in-One Queue Management Solution</h2>
+                <p class="section-subtitle">Complete tools for managing customer flow and operations</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Appointment System</h3>
+                    <p>Allow customers to book appointments online, reduce no-shows by 80% with automated reminders, and manage schedules efficiently.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Online Booking</li>
+                        <li><i class="fas fa-check"></i> Automated Reminders</li>
+                        <li><i class="fas fa-check"></i> Calendar Integration</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Virtual Branch</h3>
+                    <p>Complete digital transformation with video call services. Serve customers remotely without physical visits with secure, contactless service.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> Contactless Service</li>
+                        <li><i class="fas fa-check"></i> Secure Communication</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Performance Analytics</h3>
+                    <p>Real-time dashboards showing wait times, customer satisfaction, and staff productivity. Data-driven insights to optimize operations.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Real-time Dashboards</li>
+                        <li><i class="fas fa-check"></i> Wait Time Analytics</li>
+                        <li><i class="fas fa-check"></i> Staff Performance</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-map-network"></i>
+                    </div>
+                    <h3>Multi-Location Management</h3>
+                    <p>Manage unlimited locations, staff, and services from one powerful dashboard with real-time visibility across all sites.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Centralized Control</li>
+                        <li><i class="fas fa-check"></i> Multiple Locations</li>
+                        <li><i class="fas fa-check"></i> Instant Alerts</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Customer Communication</h3>
+                    <p>Automated SMS and push notifications keep customers informed. Reduce customer anxiety and increase satisfaction by 97%.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> SMS Notifications</li>
+                        <li><i class="fas fa-check"></i> Push Alerts</li>
+                        <li><i class="fas fa-check"></i> Email Updates</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Easy Setup</h3>
+                    <p>Get operational in under 10 minutes with zero technical expertise required. Intuitive setup wizard automatically configures your system.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Quick Setup</li>
+                        <li><i class="fas fa-check"></i> No Code Required</li>
+                        <li><i class="fas fa-check"></i> Instant Deploy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section class="clients-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Trusted by Leading Organizations</h2>
+                <p class="section-subtitle">Thousands of businesses in India rely on SKIPIT</p>
+            </div>
+            <div class="clients-grid">
+                <div class="client-logo">
+                    <i class="fas fa-university"></i>
+                    <p>State Bank of India</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-building"></i>
+                    <p>HDFC Bank</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-hospital"></i>
+                    <p>Apollo Hospitals</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-landmark"></i>
+                    <p>Passport Office</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-clinic-medical"></i>
+                    <p>Max Healthcare</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-university"></i>
+                    <p>ICICI Bank</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-subtitle">Real success stories from organizations using SKIPIT</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"SKIPIT has been invaluable for helping us manage queues during peak hours and year-round. Customer satisfaction has increased significantly."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RS</div>
+                        <div>
+                            <p class="author-name">Rajesh Singh</p>
+                            <p class="author-role">Branch Manager, SBI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The analytics dashboard gave us insights we never had before. We reduced wait times by 60% and improved staff efficiency dramatically."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AK</div>
+                        <div>
+                            <p class="author-name">Aarti Kumar</p>
+                            <p class="author-role">Operations Manager, Apollo Hospital</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Setup was incredibly easy - we were operational within 10 minutes. The customer support team is always helpful and responsive to our needs."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PJ</div>
+                        <div>
+                            <p class="author-name">Priya Joshi</p>
+                            <p class="author-role">Director, Passport Seva Kendra</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security & Compliance Section -->
+    <section class="security-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Enterprise-Grade Security & Compliance</h2>
+                <p class="section-subtitle">Your data is protected with industry-leading security standards</p>
+            </div>
+            <div class="security-grid">
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>SOC 2 Certified</h3>
+                    <p>We adhere to SOC 2 security standards for enterprise-level data protection and compliance.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>HIPAA Compliant</h3>
+                    <p>Healthcare-grade encryption ensuring patient data privacy and regulatory compliance for medical institutions.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>GDPR & CCPA</h3>
+                    <p>Full compliance with global data protection regulations including GDPR (EU) and CCPA (California).</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>SSO/SAML 2.0 & MFA</h3>
+                    <p>Enterprise authentication with single sign-on and multi-factor authentication for enhanced security.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Automated Data Anonymization</h3>
+                    <p>Customer data is automatically anonymized on schedule to protect privacy and comply with regulations.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>99.5% Uptime SLA</h3>
+                    <p>Guaranteed availability with formal uptime agreement ensuring your queues are always operational.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Choose the perfect plan for your business</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-badge">Popular</div>
+                    <h3>Basic</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">999</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">Perfect for small shops and clinics</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Upto 5 Counters</li>
+                        <li><i class="fas fa-check"></i> 1 Location</li>
+                        <li><i class="fas fa-check"></i> Basic Analytics</li>
+                        <li><i class="fas fa-times"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> SMS Notifications</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Get Started</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-badge featured">Most Popular</div>
+                    <h3>Professional</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">2,999</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">For growing banks and hospitals</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Upto 20 Counters</li>
+                        <li><i class="fas fa-check"></i> 5 Locations</li>
+                        <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                        <li><i class="fas fa-check"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Get Started</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-badge">Enterprise</div>
+                    <h3>Enterprise</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">Custom</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">For large organizations and networks</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited Counters</li>
+                        <li><i class="fas fa-check"></i> Unlimited Locations</li>
+                        <li><i class="fas fa-check"></i> Custom Analytics</li>
+                        <li><i class="fas fa-check"></i> All Features</li>
+                        <li><i class="fas fa-check"></i> Dedicated Support</li>
+                    </ul>
+                    <button class="btn btn-secondary btn-full">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Eliminate Waiting Lines?</h2>
+                <p>Start your free 14-day trial today. No credit card required.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary btn-large" onclick="showSignupModal()">
+                        <i class="fas fa-play-circle"></i> Start Free Trial
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="contactSales()">
+                        <i class="fas fa-phone"></i> Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Modals -->
-    <!-- Auth Modal -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
