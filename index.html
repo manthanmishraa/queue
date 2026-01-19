@@ -14,7 +14,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <span>SKIPIT</span>
+                <img src="logo-removebg-preview.png" alt="SKIPIT Logo" class="logo-img">
             </div>
             <div class="nav-links">
                 <a href="#home" class="nav-link active">Home</a>
@@ -22,8 +22,39 @@
                 <a href="#about" class="nav-link">About</a>
                 <button class="btn btn-primary" onclick="showAuthModal()">Login</button>
             </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <h3>SKIPIT Dashboard</h3>
+                <span class="mobile-menu-close" onclick="toggleMobileMenu()">&times;</span>
+            </div>
+            <div class="mobile-menu-items">
+                <div class="mobile-menu-item" onclick="showDashboard()">
+                    <i class="fas fa-layout"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="mobile-menu-item" onclick="showQueuesModal()">
+                    <i class="fas fa-bars"></i>
+                    <span>Queues</span>
+                </div>
+                <div class="mobile-menu-item" onclick="showAnalyticsModal()">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="mobile-menu-item" onclick="showSettingsModal()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
@@ -34,8 +65,9 @@
         </div>
         <div class="hero-container">
             <div class="hero-content">
-                <h1 class="hero-title">Skip the Queue, Save Your Time</h1>
-                <p class="hero-subtitle">Join digital queues at banks, hospitals, and government offices across India. Real-time tracking, instant notifications, and zero waiting hassle.</p>
+                <h1 class="hero-title">Skip the wait, Not the service.</h1>
+                <p class="hero-subtitle">India's leading digital queue management platform. Join virtual queues at banks, hospitals, and government offices. Real-time tracking, instant notifications, and zero physical waiting.</p>
+
                 <div class="hero-buttons">
                     <button class="btn btn-primary btn-large" onclick="showJoinQueueModal()">
                         <i class="fas fa-play-circle"></i> Join Queue Now
@@ -44,51 +76,219 @@
                         <i class="fas fa-qrcode"></i> Scan QR Code
                     </button>
                 </div>
-                <div class="hero-trust">
-                    <span><i class="fas fa-check-circle"></i> 50K+ Active Users</span>
-                    <span><i class="fas fa-check-circle"></i> 1000+ Providers</span>
-                    <span><i class="fas fa-check-circle"></i> 50+ Indian Cities</span>
-                </div>
             </div>
             <div class="hero-image">
                 <div class="modern-interface-mockup">
                     <div class="interface-header">
                         <div class="header-brand">SKIPIT</div>
                         <div class="header-menu">
-                            <i class="fas fa-bell"></i>
-                            <i class="fas fa-user-circle"></i>
+                            <div class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                                <i class="fas fa-moon" id="themeIcon"></i>
+                            </div>
+                            <div class="notification-icon" onclick="toggleNotifications()">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                                <!-- Notifications Dropdown -->
+                                <div id="notificationsDropdown" class="dropdown-menu" style="display: none;">
+                                    <div class="dropdown-header">
+                                        <h4>Notifications</h4>
+                                        <button class="clear-all-btn" onclick="clearAllNotifications()">Clear All</button>
+                                    </div>
+                                    <div class="notifications-list">
+                                        <div class="notification-item">
+                                            <i class="fas fa-bell text-blue"></i>
+                                            <div class="notification-content">
+                                                <p>Your turn is coming up at SBI Bank</p>
+                                                <span class="notification-time">2 minutes ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <i class="fas fa-check-circle text-green"></i>
+                                            <div class="notification-content">
+                                                <p>Queue request approved at Apollo Hospital</p>
+                                                <span class="notification-time">5 minutes ago</span>
+                                            </div>
+                                        </div>
+                                        <div class="notification-item">
+                                            <i class="fas fa-clock text-orange"></i>
+                                            <div class="notification-content">
+                                                <p>Estimated wait time updated: 8 minutes</p>
+                                                <span class="notification-time">10 minutes ago</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-footer">
+                                        <button class="view-all-btn" onclick="viewAllNotifications()">View All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profile-icon" onclick="toggleProfileMenu()">
+                                <i class="fas fa-user-circle"></i>
+                                <!-- Profile Dropdown -->
+                                <div id="profileDropdown" class="dropdown-menu" style="display: none;">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar">GU</div>
+                                        <div class="profile-info">
+                                            <div class="profile-name">Guest User</div>
+                                            <div class="profile-email">Not logged in</div>
+                                        </div>
+                                    </div>
+                                    <div class="profile-menu">
+                                        <div class="menu-item" onclick="showMyQueues()">
+                                            <i class="fas fa-list"></i>
+                                            <span>My Queues</span>
+                                        </div>
+                                        <div class="menu-item" onclick="showProfile()">
+                                            <i class="fas fa-user"></i>
+                                            <span>Profile Settings</span>
+                                        </div>
+                                        <div class="menu-item" onclick="showNotificationSettings()">
+                                            <i class="fas fa-bell"></i>
+                                            <span>Notifications</span>
+                                        </div>
+                                        <div class="menu-item" onclick="showHelp()">
+                                            <i class="fas fa-question-circle"></i>
+                                            <span>Help & Support</span>
+                                        </div>
+                                        <div class="menu-item logout" onclick="logout()">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>Logout</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    
+
                     <div class="interface-body">
-                        <!-- Left Sidebar -->
                         <div class="interface-sidebar">
                             <div class="sidebar-item active" onclick="showDashboard()">
                                 <i class="fas fa-layout"></i>
                                 <span>Dashboard</span>
                             </div>
-                            <div class="sidebar-item" onclick="showQueuesModal()">
+                            <div class="sidebar-item" onclick="toggleQueuesDropdown()">
                                 <i class="fas fa-bars"></i>
                                 <span>Queues</span>
+                                <!-- Queues Dropdown -->
+                                <div id="queuesDropdown" class="sidebar-dropdown" style="display: none;">
+                                    <div class="dropdown-title">Active Queues</div>
+                                    <div class="queue-item-small">
+                                        <div class="queue-icon-small"><i class="fas fa-university"></i></div>
+                                        <div class="queue-info-small">
+                                            <div class="queue-name">SBI Bank</div>
+                                            <div class="queue-pos">Position: 12</div>
+                                            <div class="queue-wait">Wait: 18 min</div>
+                                        </div>
+                                        <span class="status-small active">Active</span>
+                                    </div>
+                                    <div class="queue-item-small">
+                                        <div class="queue-icon-small"><i class="fas fa-hospital"></i></div>
+                                        <div class="queue-info-small">
+                                            <div class="queue-name">Apollo Hospital</div>
+                                            <div class="queue-pos">Position: 8</div>
+                                            <div class="queue-wait">Wait: 12 min</div>
+                                        </div>
+                                        <span class="status-small active">Active</span>
+                                    </div>
+                                    <div class="queue-item-small">
+                                        <div class="queue-icon-small"><i class="fas fa-building"></i></div>
+                                        <div class="queue-info-small">
+                                            <div class="queue-name">Passport Office</div>
+                                            <div class="queue-pos">Position: 15</div>
+                                            <div class="queue-wait">Wait: 25 min</div>
+                                        </div>
+                                        <span class="status-small waiting">Waiting</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="sidebar-item" onclick="showAnalyticsModal()">
+                            <div class="sidebar-item" onclick="toggleAnalyticsDropdown()">
                                 <i class="fas fa-chart-bar"></i>
                                 <span>Analytics</span>
+                                <!-- Analytics Dropdown -->
+                                <div id="analyticsDropdown" class="sidebar-dropdown" style="display: none;">
+                                    <div class="dropdown-title">Quick Analytics</div>
+                                    <div class="analytics-mini-grid">
+                                        <div class="analytics-mini-card">
+                                            <div class="mini-value">156</div>
+                                            <div class="mini-label">Queues</div>
+                                        </div>
+                                        <div class="analytics-mini-card">
+                                            <div class="mini-value">12m</div>
+                                            <div class="mini-label">Avg Wait</div>
+                                        </div>
+                                        <div class="analytics-mini-card">
+                                            <div class="mini-value">28h</div>
+                                            <div class="mini-label">Saved</div>
+                                        </div>
+                                    </div>
+                                    <div class="analytics-mini-bars">
+                                        <div class="mini-bar">
+                                            <span class="bar-label">Banking</span>
+                                            <div class="bar-mini"><div class="bar-mini-fill" style="width: 45%;"></div></div>
+                                            <span class="bar-pct">45%</span>
+                                        </div>
+                                        <div class="mini-bar">
+                                            <span class="bar-label">Health</span>
+                                            <div class="bar-mini"><div class="bar-mini-fill" style="width: 35%;"></div></div>
+                                            <span class="bar-pct">35%</span>
+                                        </div>
+                                        <div class="mini-bar">
+                                            <span class="bar-label">Govt</span>
+                                            <div class="bar-mini"><div class="bar-mini-fill" style="width: 20%;"></div></div>
+                                            <span class="bar-pct">20%</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="sidebar-item" onclick="showSettingsModal()">
+                            <div class="sidebar-item" onclick="toggleSettingsDropdown()">
                                 <i class="fas fa-cog"></i>
                                 <span>Settings</span>
+                                <!-- Settings Dropdown -->
+                                <div id="settingsDropdown" class="sidebar-dropdown" style="display: none;">
+                                    <div class="dropdown-title">Quick Settings</div>
+                                    <div class="settings-mini-list">
+                                        <div class="settings-mini-item">
+                                            <span class="setting-mini-label">Email Notifications</span>
+                                            <div class="toggle-mini">
+                                                <input type="checkbox" id="emailToggleMini" checked>
+                                                <label for="emailToggleMini"></label>
+                                            </div>
+                                        </div>
+                                        <div class="settings-mini-item">
+                                            <span class="setting-mini-label">SMS Alerts</span>
+                                            <div class="toggle-mini">
+                                                <input type="checkbox" id="smsToggleMini" checked>
+                                                <label for="smsToggleMini"></label>
+                                            </div>
+                                        </div>
+                                        <div class="settings-mini-item">
+                                            <span class="setting-mini-label">Push Notifications</span>
+                                            <div class="toggle-mini">
+                                                <input type="checkbox" id="pushToggleMini" checked>
+                                                <label for="pushToggleMini"></label>
+                                            </div>
+                                        </div>
+                                        <div class="settings-mini-select">
+                                            <label>Language:</label>
+                                            <select><option>English</option><option>Hindi</option></select>
+                                        </div>
+                                        <div class="settings-mini-select">
+                                            <label>Theme:</label>
+                                            <select><option>Light</option><option>Dark</option></select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Main Content -->
                         <div class="interface-main">
                             <div class="content-header">
                                 <h2>Queue Overview</h2>
                                 <p>Real-time status across all locations</p>
                             </div>
 
-                            <!-- Metrics Row -->
                             <div class="metrics-grid">
                                 <div class="metric-card">
                                     <div class="metric-icon active-customers">
@@ -121,7 +321,6 @@
                                 </div>
                             </div>
 
-                            <!-- Queue List -->
                             <div class="queue-list-section">
                                 <h3>Active Locations</h3>
                                 <div class="queue-list-items">
@@ -159,6 +358,225 @@
             </div>
         </div>
     </section>
+
+    <!-- Modals for Queue, Analytics, Settings -->
+    <!-- Queues Modal -->
+    <div id="queuesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-bars"></i> Active Queues</h2>
+                <span class="close-btn" onclick="closeModal('queuesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="queue-item">
+                    <div class="queue-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="queue-info">
+                        <h3>SBI Bank Mumbai</h3>
+                        <p class="queue-service">Banking Services - Cash Withdrawal</p>
+                        <div class="queue-stats">
+                            <span class="position"><i class="fas fa-ticket"></i> Position: 12</span>
+                            <span class="wait-time"><i class="fas fa-clock"></i> Wait: ~18 min</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <span class="status-badge active">Active</span>
+                    </div>
+                </div>
+
+                <div class="queue-item">
+                    <div class="queue-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="queue-info">
+                        <h3>Apollo Hospital</h3>
+                        <p class="queue-service">Healthcare - General Consultation</p>
+                        <div class="queue-stats">
+                            <span class="position"><i class="fas fa-ticket"></i> Position: 8</span>
+                            <span class="wait-time"><i class="fas fa-clock"></i> Wait: ~12 min</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 55%;"></div>
+                        </div>
+                        <span class="status-badge active">Active</span>
+                    </div>
+                </div>
+
+                <div class="queue-item">
+                    <div class="queue-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="queue-info">
+                        <h3>Passport Office Delhi</h3>
+                        <p class="queue-service">Government - Passport Renewal</p>
+                        <div class="queue-stats">
+                            <span class="position"><i class="fas fa-ticket"></i> Position: 15</span>
+                            <span class="wait-time"><i class="fas fa-clock"></i> Wait: ~25 min</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                        <span class="status-badge waiting">Waiting</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('queuesModal')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div id="analyticsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+                <span class="close-btn" onclick="closeModal('analyticsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-icon"><i class="fas fa-list"></i></div>
+                        <div class="analytics-value">156</div>
+                        <div class="analytics-label">Total Queues Joined</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon"><i class="fas fa-clock"></i></div>
+                        <div class="analytics-value">12 min</div>
+                        <div class="analytics-label">Avg Wait Time</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon"><i class="fas fa-hourglass-end"></i></div>
+                        <div class="analytics-value">28h</div>
+                        <div class="analytics-label">Time Saved</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="analytics-value">5</div>
+                        <div class="analytics-label">Cancellations</div>
+                    </div>
+                </div>
+
+                <div class="analytics-section">
+                    <h3>Most Used Services</h3>
+                    <div class="service-bars">
+                        <div class="bar-item">
+                            <span class="bar-label">Banking</span>
+                            <div class="bar-progress">
+                                <div class="bar-fill" style="width: 45%; background: #3b82f6;"></div>
+                            </div>
+                            <span class="bar-value">45%</span>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">Healthcare</span>
+                            <div class="bar-progress">
+                                <div class="bar-fill" style="width: 35%; background: #10b981;"></div>
+                            </div>
+                            <span class="bar-value">35%</span>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">Government</span>
+                            <div class="bar-progress">
+                                <div class="bar-fill" style="width: 20%; background: #f59e0b;"></div>
+                            </div>
+                            <span class="bar-value">20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('analyticsModal')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Notifications</h3>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">Email Notifications</span>
+                            <span class="setting-desc">Receive updates via email</span>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="emailToggle" checked>
+                            <label for="emailToggle"></label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">SMS Alerts</span>
+                            <span class="setting-desc">Get SMS when it's your turn</span>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="smsToggle" checked>
+                            <label for="smsToggle"></label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">Push Notifications</span>
+                            <span class="setting-desc">Push alerts to your device</span>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="pushToggle" checked>
+                            <label for="pushToggle"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Preferences</h3>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">Language</span>
+                            <span class="setting-desc">Choose your preferred language</span>
+                        </div>
+                        <select class="setting-select">
+                            <option>English</option>
+                            <option>Hindi</option>
+                            <option>Marathi</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">Theme</span>
+                            <span class="setting-desc">Light or Dark mode</span>
+                        </div>
+                        <select class="setting-select">
+                            <option>Light Mode</option>
+                            <option>Dark Mode</option>
+                            <option>Auto</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span class="setting-name">Queue Reminder</span>
+                            <span class="setting-desc">Alert before your turn</span>
+                        </div>
+                        <select class="setting-select">
+                            <option>5 minutes before</option>
+                            <option>10 minutes before</option>
+                            <option>15 minutes before</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('settingsModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Services Section -->
     <section id="services" class="services">
@@ -267,23 +685,7 @@
                         <i class="fas fa-building"></i> For Service Providers
                     </button>
                 </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number" data-target="50000">50K+</div>
-                        <div class="stat-label">Active Users</div>
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" data-target="1000">1000+</div>
-                        <div class="stat-label">Service Providers</div>
-                        <div class="stat-icon"><i class="fas fa-store"></i></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" data-target="50">50+</div>
-                        <div class="stat-label">Indian Cities</div>
-                        <div class="stat-icon"><i class="fas fa-city"></i></div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
@@ -402,7 +804,7 @@
 
                 <div class="product-card">
                     <div class="product-icon">
-                        <i class="fas fa-map-network"></i>
+                        <i class="fas fa-map-location-dot"></i>
                     </div>
                     <h3>Multi-Location Management</h3>
                     <p>Manage unlimited locations, staff, and services from one powerful dashboard with real-time visibility across all sites.</p>
@@ -478,70 +880,7 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">What Our Customers Say</h2>
-                <p class="section-subtitle">Real success stories from organizations using SKIPIT</p>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"SKIPIT has been invaluable for helping us manage queues during peak hours and year-round. Customer satisfaction has increased significantly."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">RS</div>
-                        <div>
-                            <p class="author-name">Rajesh Singh</p>
-                            <p class="author-role">Branch Manager, SBI</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"The analytics dashboard gave us insights we never had before. We reduced wait times by 60% and improved staff efficiency dramatically."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">AK</div>
-                        <div>
-                            <p class="author-name">Aarti Kumar</p>
-                            <p class="author-role">Operations Manager, Apollo Hospital</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="testimonial-text">"Setup was incredibly easy - we were operational within 10 minutes. The customer support team is always helpful and responsive to our needs."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">PJ</div>
-                        <div>
-                            <p class="author-name">Priya Joshi</p>
-                            <p class="author-role">Director, Passport Seva Kendra</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Security & Compliance Section -->
     <section class="security-section">
@@ -597,69 +936,127 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section class="pricing-section">
+    <!-- AI Insights Section -->
+    <section class="ai-insights-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Simple, Transparent Pricing</h2>
-                <p class="section-subtitle">Choose the perfect plan for your business</p>
+            <div class="ai-content">
+                <div class="ai-text">
+                    <h2>AI-Powered Business Intelligence</h2>
+                    <p>Transform your queue data into actionable insights with advanced analytics and machine learning</p>
+                    <div class="ai-features">
+                        <div class="ai-feature">
+                            <i class="fas fa-chart-line"></i>
+                            <div>
+                                <h4>Demand Forecasting</h4>
+                                <p>Predict peak hours and customer volume with 95% accuracy</p>
+                            </div>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fas fa-users-cog"></i>
+                            <div>
+                                <h4>Staff Optimization</h4>
+                                <p>Automatically suggest optimal staffing levels for any time period</p>
+                            </div>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <div>
+                                <h4>Smart Recommendations</h4>
+                                <p>Get AI-driven suggestions to improve customer satisfaction</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-dashboard">
+                    <div class="dashboard-mockup">
+                        <div class="dashboard-header">
+                            <h3>AI Insights Dashboard</h3>
+                            <span class="live-indicator">🟢 Live</span>
+                        </div>
+                        <div class="dashboard-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Predicted Wait Time</span>
+                                <span class="metric-value">12 min</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Satisfaction Score</span>
+                                <span class="metric-value">94%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Staff Efficiency</span>
+                                <span class="metric-value">87%</span>
+                            </div>
+                        </div>
+                        <div class="dashboard-chart">
+                            <div class="chart-bars">
+                                <div class="bar" style="height: 60%"></div>
+                                <div class="bar" style="height: 80%"></div>
+                                <div class="bar" style="height: 45%"></div>
+                                <div class="bar" style="height: 90%"></div>
+                                <div class="bar" style="height: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-badge">Popular</div>
-                    <h3>Basic</h3>
-                    <div class="pricing-amount">
-                        <span class="currency">₹</span>
-                        <span class="price">999</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <p class="pricing-description">Perfect for small shops and clinics</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Upto 5 Counters</li>
-                        <li><i class="fas fa-check"></i> 1 Location</li>
-                        <li><i class="fas fa-check"></i> Basic Analytics</li>
-                        <li><i class="fas fa-times"></i> Video Consultations</li>
-                        <li><i class="fas fa-check"></i> SMS Notifications</li>
-                    </ul>
-                    <button class="btn btn-primary btn-full">Get Started</button>
-                </div>
+        </div>
+    </section>
 
-                <div class="pricing-card featured">
-                    <div class="pricing-badge featured">Most Popular</div>
-                    <h3>Professional</h3>
-                    <div class="pricing-amount">
-                        <span class="currency">₹</span>
-                        <span class="price">2,999</span>
-                        <span class="period">/month</span>
+    <!-- ROI Calculator Section -->
+    <section class="roi-section">
+        <div class="container">
+            <div class="roi-content">
+                <div class="roi-text">
+                    <h2>Calculate Your ROI</h2>
+                    <p>See how much time and money SKIPIT can save your organization</p>
+                    <div class="roi-benefits">
+                        <div class="benefit-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Reduce wait times by 65%</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-users"></i>
+                            <span>Increase customer satisfaction by 40%</span>
+                        </div>
+                        <div class="benefit-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Improve staff efficiency by 30%</span>
+                        </div>
                     </div>
-                    <p class="pricing-description">For growing banks and hospitals</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Upto 20 Counters</li>
-                        <li><i class="fas fa-check"></i> 5 Locations</li>
-                        <li><i class="fas fa-check"></i> Advanced Analytics</li>
-                        <li><i class="fas fa-check"></i> Video Consultations</li>
-                        <li><i class="fas fa-check"></i> Priority Support</li>
-                    </ul>
-                    <button class="btn btn-primary btn-full">Get Started</button>
                 </div>
-
-                <div class="pricing-card">
-                    <div class="pricing-badge">Enterprise</div>
-                    <h3>Enterprise</h3>
-                    <div class="pricing-amount">
-                        <span class="currency">₹</span>
-                        <span class="price">Custom</span>
-                        <span class="period">/month</span>
+                <div class="roi-calculator">
+                    <div class="calculator-card">
+                        <h3>ROI Calculator</h3>
+                        <div class="calculator-form">
+                            <div class="form-group">
+                                <label>Daily Customers</label>
+                                <input type="number" id="dailyCustomers" value="100" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Average Wait Time (minutes)</label>
+                                <input type="number" id="waitTime" value="15" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Staff Members</label>
+                                <input type="number" id="staffCount" value="5" min="1">
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="calculateROI()">Calculate Savings</button>
+                        </div>
+                        <div class="roi-results" id="roiResults" style="display: none;">
+                            <div class="result-item">
+                                <span class="result-label">Time Saved Daily:</span>
+                                <span class="result-value" id="timeSaved">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Monthly Cost Savings:</span>
+                                <span class="result-value" id="costSavings">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Annual ROI:</span>
+                                <span class="result-value" id="annualROI">-</span>
+                            </div>
+                        </div>
                     </div>
-                    <p class="pricing-description">For large organizations and networks</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Unlimited Counters</li>
-                        <li><i class="fas fa-check"></i> Unlimited Locations</li>
-                        <li><i class="fas fa-check"></i> Custom Analytics</li>
-                        <li><i class="fas fa-check"></i> All Features</li>
-                        <li><i class="fas fa-check"></i> Dedicated Support</li>
-                    </ul>
-                    <button class="btn btn-secondary btn-full">Contact Sales</button>
                 </div>
             </div>
         </div>
@@ -683,364 +1080,12 @@
         </div>
     </section>
 
-    <!-- Modals -->
-    <div id="authModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Login to SKIPIT</h3>
-                <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="auth-tabs">
-                    <button class="tab-btn active" onclick="switchTab('customer')">Customer</button>
-                    <button class="tab-btn" onclick="switchTab('provider')">Provider</button>
-                </div>
-                <div id="customerTab" class="tab-content active">
-                    <form id="customerLoginForm">
-                        <div class="form-group">
-                            <label>Phone Number (10-digit Indian number)</label>
-                            <input type="tel" id="customerPhone" placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
-                            <small style="color: #6b7280; display: block; margin-top: 5px;">Enter your 10-digit mobile number (starting with 6-9)</small>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-full">Send OTP</button>
-                    </form>
-                </div>
-                <div id="providerTab" class="tab-content">
-                    <form id="providerLoginForm">
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="providerEmail" placeholder="admin@bank.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" id="providerPassword" placeholder="Enter password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-full">Login</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Join Queue Modal -->
-    <div id="joinQueueModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Join Digital Queue</h3>
-                <span class="modal-close" onclick="closeModal('joinQueueModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="location-search">
-                    <div class="form-group">
-                        <label>Search Location</label>
-                        <input type="text" id="locationSearch" placeholder="Enter city or address">
-                        <button class="btn btn-secondary" onclick="getCurrentLocation()">
-                            <i class="fas fa-map-marker-alt"></i> Use Current Location
-                        </button>
-                    </div>
-                </div>
-                <div class="services-list" id="servicesList">
-                    <!-- Services will be populated here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Provider Modal -->
-    <div id="providerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Provider Dashboard</h3>
-                <span class="modal-close" onclick="closeModal('providerModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="provider-options">
-                    <button class="btn btn-primary btn-full" onclick="showRegisterOrgModal()">Register Organization</button>
-                    <button class="btn btn-secondary btn-full" onclick="showManageQueuesModal()">Manage Queues</button>
-                    <button class="btn btn-secondary btn-full" onclick="showAnalyticsDashboard()">Analytics Dashboard</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QR Scan Modal -->
-    <div id="qrScanModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Scan QR Code to Join Queue</h3>
-                <span class="modal-close" onclick="closeModal('qrScanModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="qr-scanner-container">
-                    <video id="qrVideo" autoplay></video>
-                    <div class="qr-overlay"></div>
-                </div>
-                <p style="text-align: center; margin-top: 20px; color: #6b7280;">Position the QR code within the frame</p>
-                <button class="btn btn-secondary btn-full" onclick="simulateQRScan()">Simulate QR Scan (Demo)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Organization Modal -->
-    <div id="registerOrgModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Register Your Organization</h3>
-                <span class="modal-close" onclick="closeModal('registerOrgModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="registerOrgForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Organization Name</label>
-                            <input type="text" id="orgName" placeholder="Bank of America" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Organization Type</label>
-                            <select id="orgType" required>
-                                <option value="">Select Type</option>
-                                <option value="bank">Bank</option>
-                                <option value="hospital">Hospital</option>
-                                <option value="government">Government Office</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" id="orgAddress" placeholder="123 Main St, City, State" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>City</label>
-                            <select id="orgCity" required>
-                                <option value="">Select City</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="Hyderabad">Hyderabad</option>
-                                <option value="Chennai">Chennai</option>
-                                <option value="Kolkata">Kolkata</option>
-                                <option value="Pune">Pune</option>
-                                <option value="Ahmedabad">Ahmedabad</option>
-                                <option value="Jaipur">Jaipur</option>
-                                <option value="Lucknow">Lucknow</option>
-                                <option value="Indore">Indore</option>
-                                <option value="Kochi">Kochi</option>
-                                <option value="Nagpur">Nagpur</option>
-                                <option value="Chandigarh">Chandigarh</option>
-                                <option value="Surat">Surat</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>State</label>
-                            <select id="orgState" required>
-                                <option value="">Select State</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Maharashtra">Maharashtra</option>
-                                <option value="Karnataka">Karnataka</option>
-                                <option value="Telangana">Telangana</option>
-                                <option value="Tamil Nadu">Tamil Nadu</option>
-                                <option value="West Bengal">West Bengal</option>
-                                <option value="Gujarat">Gujarat</option>
-                                <option value="Rajasthan">Rajasthan</option>
-                                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                <option value="Kerala">Kerala</option>
-                                <option value="Chandigarh">Chandigarh</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Country</label>
-                            <input type="text" id="orgCountry" placeholder="India" value="India" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Contact Email</label>
-                        <input type="email" id="orgEmail" placeholder="contact@organization.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Contact Phone</label>
-                        <input type="tel" id="orgPhone" placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Register Organization</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manage Queues Modal -->
-    <div id="manageQueuesModal" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Manage Active Queues</h3>
-                <span class="modal-close" onclick="closeModal('manageQueuesModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="activeQueuesList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- End Queue Modal -->
-    <div id="endQueueModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>End Queue</h3>
-                <span class="modal-close" onclick="closeModal('endQueueModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="endQueueForm">
-                    <div class="form-group">
-                        <label>Queue Name</label>
-                        <input type="text" id="endQueueName" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Reason for Ending Queue</label>
-                        <select id="endQueueReason" required>
-                            <option value="">Select Reason</option>
-                            <option value="end_of_day">End of Business Day</option>
-                            <option value="technical_issue">Technical Issue</option>
-                            <option value="emergency">Emergency</option>
-                            <option value="staff_unavailable">Staff Unavailable</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Additional Details (Optional)</label>
-                        <textarea id="endQueueDetails" rows="3" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="notifyUsers" checked>
-                            <span>Notify all users in queue</span>
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">End Queue</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Queue Request Notification (Organization) -->
-    <div id="queueRequestNotification" class="queue-request-popup" style="display: none;">
-        <div class="request-card">
-            <div class="request-header">
-                <i class="fas fa-user-clock"></i>
-                <h4>New Queue Request</h4>
-            </div>
-            <div class="request-body">
-                <p><strong>User:</strong> <span id="requestUserName"></span></p>
-                <p><strong>Phone:</strong> <span id="requestUserPhone"></span></p>
-                <p><strong>Queue:</strong> <span id="requestQueueName"></span></p>
-                <p><strong>Time:</strong> <span id="requestTime"></span></p>
-            </div>
-            <div class="request-actions">
-                <button class="btn btn-primary" onclick="handleQueueRequest(true)">Accept</button>
-                <button class="btn btn-secondary" onclick="handleQueueRequest(false)">Reject</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- User Status Modal -->
-    <div id="userStatusModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Queue Request Status</h3>
-                <span class="modal-close" onclick="closeModal('userStatusModal')">&times;</span>
-            </div>
-            <div class="modal-body" style="text-align: center; padding: 40px;">
-                <div id="statusIcon" style="font-size: 64px; margin-bottom: 20px;"></div>
-                <h3 id="statusTitle" style="margin-bottom: 15px;"></h3>
-                <p id="statusMessage" style="color: #6b7280; font-size: 16px;"></p>
-                <button class="btn btn-primary" onclick="closeModal('userStatusModal')" style="margin-top: 20px;">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Purpose Modal -->
-    <div id="purposeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Tell Us Your Purpose</h3>
-                <span class="modal-close" onclick="closeModal('purposeModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p style="color: #6b7280; margin-bottom: 20px;">To save time, briefly tell us what you need:</p>
-                <form id="purposeForm">
-                    <div class="form-group">
-                        <label>Select Service Type</label>
-                        <select id="serviceType" required onchange="updatePurposeOptions()">
-                            <option value="">Choose service...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Brief Description (Optional)</label>
-                        <textarea id="purposeDescription" rows="3" placeholder="E.g., Need to update address, apply for new card, etc." style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Documents you have (Optional)</label>
-                        <input type="text" id="documents" placeholder="E.g., Aadhaar, PAN, Passport">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full">Submit & Continue</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Generate QR Modal -->
-    <div id="generateQRModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Queue QR Code</h3>
-                <span class="modal-close" onclick="closeModal('generateQRModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="qrCodeContainer" style="text-align: center; margin: 20px 0;"></div>
-                <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">Users can scan this QR code to join the queue</p>
-                <button class="btn btn-primary btn-full" onclick="downloadQR()">Download QR Code</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Complete Service Modal -->
-    <div id="completeServiceModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Complete Service</h3>
-                <span class="modal-close" onclick="closeModal('completeServiceModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p style="color: #6b7280; margin-bottom: 20px;">Patient: <strong id="completePatientName"></strong></p>
-                <div class="form-group">
-                    <label>Does patient need additional services?</label>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn btn-secondary" onclick="completeWithoutHandoff()" style="flex: 1;">No, Complete</button>
-                        <button class="btn btn-primary" onclick="showHandoffOptions()" style="flex: 1;">Yes, Handoff</button>
-                    </div>
-                </div>
-                <div id="handoffOptions" style="display: none; margin-top: 20px;">
-                    <div class="form-group">
-                        <label>Select Next Service</label>
-                        <select id="nextService" class="form-control">
-                            <option value="">Choose service...</option>
-                            <option value="Pharmacy">Pharmacy</option>
-                            <option value="Lab Tests">Lab Tests</option>
-                            <option value="X-Ray">X-Ray</option>
-                            <option value="Billing">Billing</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary btn-full" onclick="completeWithHandoff()">Complete & Handoff</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <i class="fas fa-clock"></i>
+                    <img src="logo-removebg-preview.png" alt="SKIPIT Logo" class="footer-logo-img">
                     <span>SKIPIT</span>
                 </div>
                 <div class="footer-links">
@@ -1062,7 +1107,52 @@
         </div>
     </footer>
 
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login to SKIPIT</h3>
+                <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" onclick="switchTab('customer')">Customer</button>
+                    <button class="tab-btn" onclick="switchTab('provider')">Provider</button>
+                </div>
+                <div id="customerTab" class="tab-content active">
+                    <form id="customerLoginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="customerEmail" placeholder="your@gmail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="customerPassword" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
+                        <p style="text-align: center; margin-top: 15px; font-size: 14px; color: #6b7280;">
+                            Don't have an account? One will be created automatically.
+                        </p>
+                    </form>
+                </div>
+                <div id="providerTab" class="tab-content">
+                    <form id="providerLoginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="providerEmail" placeholder="admin@bank.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="providerPassword" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="script.js"></script>
-    <script src="analytics.js"></script>
 </body>
 </html>

@@ -73,6 +73,12 @@ function initializeApp() {
     loadDemoData();
     checkAuthStatus();
     startAppointmentMonitor();
+    loadTheme(); // Load saved theme
+    
+    // Ensure login button is properly set up
+    setTimeout(() => {
+        updateLoginButton();
+    }, 100);
 }
 
 // Setup event listeners
@@ -164,27 +170,148 @@ function switchTab(tabName) {
 
 async function handleCustomerLogin(e) {
     e.preventDefault();
-    const phone = document.getElementById('customerPhone').value;
+    const email = document.getElementById('customerEmail').value;
+    const password = document.getElementById('customerPassword').value;
 
-    // Validate Indian phone number (10 digits)
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneRegex.test(phone)) {
-        showNotification('Please enter a valid 10-digit Indian phone number', 'error');
+    if (!email || !password) {
+        showNotification('Please enter both email and password', 'error');
+        return;
+    }
+
+    if (password.length < 6) {
+        showNotification('Password should be at least 6 characters', 'error');
         return;
     }
 
     try {
-        // Simulate API call
-        showNotification('OTP sent to +91' + phone, 'success');
-        // In real app, this would send OTP and show verification input
+        showNotification('Logging in...', 'info');
+        
+        // Mock authentication - simulate successful login
         setTimeout(() => {
-            currentUser = { type: 'customer', phone: '+91' + phone };
+            // Create mock user object
+            const mockUser = {
+                uid: 'user_' + Date.now(),
+                email: email,
+                displayName: email.split('@')[0]
+            };
+            
+            // Set current user
+            currentUser = mockUser;
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('skipitUser', JSON.stringify(mockUser));
+            
+            // Update UI
+            updateLoginButton();
+            updateProfileInfo(mockUser);
+            
             closeModal('authModal');
             showNotification('Login successful!', 'success');
-            updateUIForUser();
+            
+            console.log('User logged in:', email);
         }, 1000);
+        
     } catch (error) {
+        console.error('Error with login:', error);
         showNotification('Login failed. Please try again.', 'error');
+    }
+}
+
+async function verifyOTP(otp) {
+    if (!otp || otp.length !== 6) {
+        showNotification('Please enter a valid 6-digit OTP', 'error');
+        return;
+    }
+
+    try {
+        const result = await window.confirmationResult.confirm(otp);
+        const user = result.user;
+        
+        // Save user data to Firestore
+        await db.collection('users').doc(user.uid).set({
+            phone: user.phoneNumber,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
+        closeModal('otpModal');
+        closeModal('authModal');
+        showNotification('Login successful!', 'success');
+        
+        // Update UI for logged in user
+        updateLoginButton();
+        updateProfileInfo(user);
+        
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        showNotification('Invalid OTP. Please try again.', 'error');
+    }
+}
+
+function showOTPModal(phone) {
+    const modal = document.createElement('div');
+    modal.id = 'otpModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Enter OTP</h3>
+                <span class="modal-close" onclick="closeModal('otpModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Enter the 6-digit OTP sent to +91${phone}</p>
+                <div class="form-group">
+                    <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 8px; width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px;">
+                </div>
+                <button class="btn btn-primary btn-full" onclick="verifyOTP(document.getElementById('otpInput').value)">Verify OTP</button>
+                <div id="recaptcha-container"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Focus on OTP input
+    setTimeout(() => {
+        document.getElementById('otpInput').focus();
+    }, 100);
+}
+
+// Update login button text and functionality
+function updateLoginButton() {
+    const loginBtn = document.querySelector('.nav-links .btn-primary');
+    if (loginBtn && currentUser) {
+        loginBtn.textContent = 'My Account';
+        loginBtn.onclick = (e) => {
+            e.preventDefault();
+            toggleProfileMenu();
+        };
+    } else if (loginBtn) {
+        loginBtn.textContent = 'Login';
+        loginBtn.onclick = (e) => {
+            e.preventDefault();
+            showAuthModal();
+        };
+    }
+}
+
+// Update profile information in dropdown
+function updateProfileInfo(user) {
+    if (!user) return;
+    
+    const profileName = document.querySelector('.profile-name');
+    const profileEmail = document.querySelector('.profile-email');
+    const profileAvatar = document.querySelector('.profile-avatar');
+    
+    if (profileName) {
+        profileName.textContent = user.displayName || 'User';
+    }
+    if (profileEmail) {
+        profileEmail.textContent = user.phoneNumber || user.email || 'Phone verified';
+    }
+    if (profileAvatar) {
+        const initials = (user.displayName || user.phoneNumber || 'U').substring(0, 2).toUpperCase();
+        profileAvatar.textContent = initials;
     }
 }
 
@@ -193,18 +320,39 @@ async function handleProviderLogin(e) {
     const email = document.getElementById('providerEmail').value;
     const password = document.getElementById('providerPassword').value;
 
+    if (!email || !password) {
+        showNotification('Please enter both email and password', 'error');
+        return;
+    }
+
     try {
-        // Simulate API call
         showNotification('Logging in...', 'info');
+        
+        // Mock provider authentication
         setTimeout(() => {
-            currentUser = { type: 'provider', email: email };
+            const mockUser = {
+                uid: 'provider_' + Date.now(),
+                email: email,
+                displayName: email.split('@')[0],
+                type: 'provider'
+            };
+            
+            currentUser = mockUser;
             isOrganizationView = true;
+            
+            localStorage.setItem('skipitUser', JSON.stringify(mockUser));
+            
+            updateLoginButton();
+            updateProfileInfo(mockUser);
+            
             closeModal('authModal');
-            showNotification('Provider login successful! Waiting for queue requests...', 'success');
-            updateUIForUser();
+            showNotification('Provider login successful!', 'success');
+            
+            console.log('Provider logged in:', email);
         }, 1000);
+        
     } catch (error) {
-        showNotification('Login failed. Please check your credentials.', 'error');
+        showNotification('Login failed. Please try again.', 'error');
     }
 }
 
@@ -1114,29 +1262,55 @@ function updateUIForUser() {
     }
 }
 
+// Check authentication status on page load
 function checkAuthStatus() {
-    // Check if user is logged in (from localStorage in real app)
-    // For demo purposes, we'll keep it simple
+    const savedUser = localStorage.getItem('skipitUser');
+    if (savedUser) {
+        try {
+            currentUser = JSON.parse(savedUser);
+            updateLoginButton();
+            updateProfileInfo(currentUser);
+            console.log('User restored from localStorage:', currentUser.email);
+        } catch (error) {
+            localStorage.removeItem('skipitUser');
+            currentUser = null;
+            updateLoginButton();
+        }
+    } else {
+        currentUser = null;
+        updateLoginButton();
+    }
+    
+    // Load saved language preference
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (savedLanguage === 'hindi') {
+        changeLanguageToHindi();
+    }
 }
 
 // Demo data loading
 function loadDemoData() {
-    // Animate demo position
-    setInterval(() => {
-        const demoPos = document.getElementById('demo-position');
-        const demoWait = document.getElementById('demo-wait');
-        const progressFill = document.querySelector('.progress-fill');
-
-        let pos = parseInt(demoPos.textContent);
-        if (Math.random() < 0.3 && pos > 1) {
-            pos--;
-            demoPos.textContent = pos;
-            const wait = pos * 3;
-            demoWait.textContent = wait + ' mins';
-            const progress = ((5 - pos) / 4) * 100;
-            progressFill.style.width = progress + '%';
-        }
-    }, 3000);
+    // Only run demo animation if demo elements exist
+    const demoPos = document.getElementById('demo-position');
+    const demoWait = document.getElementById('demo-wait');
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (demoPos && demoWait) {
+        // Animate demo position
+        setInterval(() => {
+            let pos = parseInt(demoPos.textContent);
+            if (Math.random() < 0.3 && pos > 1) {
+                pos--;
+                demoPos.textContent = pos;
+                const wait = pos * 3;
+                demoWait.textContent = wait + ' mins';
+                if (progressFill) {
+                    const progress = ((5 - pos) / 4) * 100;
+                    progressFill.style.width = progress + '%';
+                }
+            }
+        }, 3000);
+    }
 }
 
 // Notification system
@@ -1415,7 +1589,835 @@ const styleSheet = document.createElement('style');
 styleSheet.textContent = notificationStyles;
 document.head.appendChild(styleSheet);
 
-// New Modal Functions
+// Firestore Database Functions
+async function saveQueueRequest(queueData) {
+    try {
+        const docRef = await db.collection('queueRequests').add({
+            userId: currentUser.uid,
+            serviceName: queueData.serviceName,
+            purpose: queueData.purpose,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'pending',
+            position: null
+        });
+        
+        currentQueueId = docRef.id;
+        return docRef.id;
+    } catch (error) {
+        console.error('Error saving queue request:', error);
+        throw error;
+    }
+}
+
+async function getUserQueues() {
+    try {
+        const snapshot = await db.collection('queueRequests')
+            .where('userId', '==', currentUser.uid)
+            .where('status', 'in', ['pending', 'active'])
+            .orderBy('timestamp', 'desc')
+            .get();
+        
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error('Error fetching user queues:', error);
+        return [];
+    }
+}
+
+async function updateUserProfile(profileData) {
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            displayName: profileData.name,
+            email: profileData.email,
+            language: profileData.language,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+    }
+}
+
+// Real-time queue updates
+function subscribeToQueueUpdates(queueId) {
+    return db.collection('queueRequests').doc(queueId)
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                updateQueueUI(data);
+            }
+        });
+}
+
+function updateQueueUI(queueData) {
+    const positionElement = document.getElementById('currentPosition');
+    const waitElement = document.getElementById('estimatedWait');
+    
+    if (positionElement && queueData.position) {
+        positionElement.textContent = queueData.position;
+        const waitTime = queueData.position * 3;
+        waitElement.textContent = waitTime + ' minutes';
+    }
+}
+
+// Theme Toggle Function
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (body.classList.contains('dark-mode')) {
+        body.classList.remove('dark-mode');
+        themeIcon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+        showNotification('Light mode activated', 'info');
+    } else {
+        body.classList.add('dark-mode');
+        themeIcon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+        showNotification('Dark mode activated', 'info');
+    }
+}
+
+// Load saved theme on page load
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeIcon) themeIcon.className = 'fas fa-sun';
+    }
+}
+
+// Notification and Profile Functions
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const profileDropdown = document.getElementById('profileDropdown');
+    
+    // Close profile dropdown if open
+    profileDropdown.style.display = 'none';
+    
+    // Toggle notifications dropdown
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block';
+        positionDropdown(dropdown, '.notification-icon');
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+function toggleProfileMenu() {
+    const dropdown = document.getElementById('profileDropdown');
+    const notificationsDropdown = document.getElementById('notificationsDropdown');
+    
+    // Close notifications dropdown if open
+    notificationsDropdown.style.display = 'none';
+    
+    // Toggle profile dropdown
+    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+        dropdown.style.display = 'block';
+        positionDropdown(dropdown, '.profile-icon');
+    } else {
+        dropdown.style.display = 'none';
+    }
+}
+
+function positionDropdown(dropdown, triggerSelector) {
+    // Dropdowns are now positioned using CSS relative positioning
+    // No need for manual positioning
+}
+
+function clearAllNotifications() {
+    const notificationsList = document.querySelector('.notifications-list');
+    notificationsList.innerHTML = '<div class="no-notifications">No notifications</div>';
+    document.querySelector('.notification-badge').style.display = 'none';
+    showNotification('All notifications cleared', 'success');
+}
+
+function viewAllNotifications() {
+    showNotification('Opening full notifications view...', 'info');
+    document.getElementById('notificationsDropdown').style.display = 'none';
+}
+
+function showMyQueues() {
+    document.getElementById('profileDropdown').style.display = 'none';
+    
+    // Create and show My Queues modal
+    const modal = document.createElement('div');
+    modal.id = 'myQueuesModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>My Active Queues</h3>
+                <span class="modal-close" onclick="closeModal('myQueuesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="queue-list">
+                    <div class="queue-item">
+                        <div class="queue-info">
+                            <h4>SBI Bank Mumbai</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> Andheri West, Mumbai</p>
+                            <p><strong>Position:</strong> 12 | <strong>Wait Time:</strong> ~18 minutes</p>
+                        </div>
+                        <div class="queue-status active">Active</div>
+                    </div>
+                    <div class="queue-item">
+                        <div class="queue-info">
+                            <h4>Apollo Hospital</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> Bandra, Mumbai</p>
+                            <p><strong>Position:</strong> 8 | <strong>Wait Time:</strong> ~12 minutes</p>
+                        </div>
+                        <div class="queue-status active">Active</div>
+                    </div>
+                    <div class="queue-item">
+                        <div class="queue-info">
+                            <h4>Passport Office Delhi</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> CP, New Delhi</p>
+                            <p><strong>Position:</strong> 15 | <strong>Wait Time:</strong> ~25 minutes</p>
+                        </div>
+                        <div class="queue-status waiting">Waiting</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showProfile() {
+    document.getElementById('profileDropdown').style.display = 'none';
+    
+    const modal = document.createElement('div');
+    modal.id = 'profileSettingsModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Profile Settings</h3>
+                <span class="modal-close" onclick="closeModal('profileSettingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your full name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter your email address" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter your phone number" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Language</label>
+                        <select class="form-control">
+                            <option>English</option>
+                            <option>Hindi</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-full" onclick="saveProfile()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showNotificationSettings() {
+    document.getElementById('profileDropdown').style.display = 'none';
+    
+    const modal = document.createElement('div');
+    modal.id = 'notificationSettingsModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Notification Settings</h3>
+                <span class="modal-close" onclick="closeModal('notificationSettingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>SMS Notifications</h4>
+                        <p>Receive SMS alerts for queue updates</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggleState(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Email Notifications</h4>
+                        <p>Get email updates about your queues</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggleState(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Push Notifications</h4>
+                        <p>Browser notifications for real-time updates</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" onchange="updateToggleState(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Queue Reminders</h4>
+                        <p>Remind me when it's almost my turn</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="updateToggleState(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button type="button" class="btn btn-primary btn-full" onclick="saveNotificationSettings()">Save Settings</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Load saved settings after modal is created
+    setTimeout(() => loadNotificationSettings(), 100);
+}
+
+function updateToggleState(toggle) {
+    // Visual feedback when toggle is changed
+    const settingItem = toggle.closest('.setting-item');
+    settingItem.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        settingItem.style.transform = 'scale(1)';
+    }, 150);
+}
+
+function showHelp() {
+    document.getElementById('profileDropdown').style.display = 'none';
+    
+    const modal = document.createElement('div');
+    modal.id = 'helpModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Help & Support</h3>
+                <span class="modal-close" onclick="closeModal('helpModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4><i class="fas fa-phone"></i> Contact Support</h4>
+                    <p><strong>24/7 Customer Support</strong></p>
+                    <p>Phone: <a href="tel:1800-XXX-XXXX">1800-XXX-XXXX</a></p>
+                    <p>Email: <a href="mailto:support@skipit.in">support@skipit.in</a></p>
+                    <p>WhatsApp: <a href="https://wa.me/91XXXXXXXXXX">+91-XXXX-XXXX-XXX</a></p>
+                </div>
+                <div class="help-section">
+                    <h4><i class="fas fa-question-circle"></i> Frequently Asked Questions</h4>
+                    <div class="faq-item">
+                        <strong>How do I join a queue?</strong>
+                        <p>Click 'Join Queue Now' and search for your location or scan the QR code at the venue.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Can I leave and rejoin a queue?</strong>
+                        <p>You can leave anytime, but you'll need to rejoin from the end if you want to come back.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>What if I'm running late?</strong>
+                        <p>Use the 'Push Me Back' feature to delay your position by 1 person.</p>
+                    </div>
+                </div>
+                <div class="help-section">
+                    <h4><i class="fas fa-book"></i> Quick Actions</h4>
+                    <button class="btn btn-secondary" onclick="startTutorial()">Take Tutorial</button>
+                    <button class="btn btn-secondary" onclick="reportIssue()">Report Issue</button>
+                    <button class="btn btn-secondary" onclick="provideFeedback()">Give Feedback</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function saveProfile() {
+    const languageSelect = document.querySelector('#profileSettingsModal select');
+    const selectedLanguage = languageSelect ? languageSelect.value : 'English';
+    
+    if (selectedLanguage === 'Hindi') {
+        changeLanguageToHindi();
+        localStorage.setItem('preferredLanguage', 'hindi');
+        showNotification('प्रोफ़ाइल सफलतापूर्वक अपडेट हो गया!', 'success');
+    } else {
+        changeLanguageToEnglish();
+        localStorage.setItem('preferredLanguage', 'english');
+        showNotification('Profile updated successfully!', 'success');
+    }
+    
+    closeModal('profileSettingsModal');
+}
+
+function changeLanguageToHindi() {
+    // Update navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    if (navLinks[0]) navLinks[0].textContent = 'होम';
+    if (navLinks[1]) navLinks[1].textContent = 'सेवाएं';
+    if (navLinks[2]) navLinks[2].textContent = 'हमारे बारे में';
+    
+    // Update login button
+    const loginBtn = document.querySelector('.nav-links .btn-primary');
+    if (loginBtn && currentUser) {
+        loginBtn.textContent = 'मेरा खाता';
+    } else if (loginBtn) {
+        loginBtn.textContent = 'लॉगिन';
+    }
+    
+    // Update hero section
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) heroTitle.textContent = 'कतार छोड़ें, अपना समय बचाएं';
+    
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    if (heroSubtitle) heroSubtitle.textContent = 'भारत भर में बैंकों, अस्पतालों और सरकारी कार्यालयों में डिजिटल कतारों में शामिल हों। रियल-टाइम ट्रैकिंग, तत्काल सूचनाएं, और शून्य प्रतीक्षा परेशानी।';
+    
+    // Update buttons
+    const joinQueueBtn = document.querySelector('.hero-buttons .btn-primary');
+    if (joinQueueBtn) joinQueueBtn.innerHTML = '<i class="fas fa-play-circle"></i> अभी कतार में शामिल हों';
+    
+    const scanQRBtn = document.querySelector('.hero-buttons .btn-secondary');
+    if (scanQRBtn) scanQRBtn.innerHTML = '<i class="fas fa-qrcode"></i> QR कोड स्कैन करें';
+}
+
+function changeLanguageToEnglish() {
+    // Update navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    if (navLinks[0]) navLinks[0].textContent = 'Home';
+    if (navLinks[1]) navLinks[1].textContent = 'Services';
+    if (navLinks[2]) navLinks[2].textContent = 'About';
+    
+    // Update login button
+    const loginBtn = document.querySelector('.nav-links .btn-primary');
+    if (loginBtn && currentUser) {
+        loginBtn.textContent = 'My Account';
+    } else if (loginBtn) {
+        loginBtn.textContent = 'Login';
+    }
+    
+    // Update hero section
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) heroTitle.textContent = 'Skip the Queue, Save Your Time';
+    
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    if (heroSubtitle) heroSubtitle.textContent = 'Join digital queues at banks, hospitals, and government offices across India. Real-time tracking, instant notifications, and zero waiting hassle.';
+    
+    // Update buttons
+    const joinQueueBtn = document.querySelector('.hero-buttons .btn-primary');
+    if (joinQueueBtn) joinQueueBtn.innerHTML = '<i class="fas fa-play-circle"></i> Join Queue Now';
+    
+    const scanQRBtn = document.querySelector('.hero-buttons .btn-secondary');
+    if (scanQRBtn) scanQRBtn.innerHTML = '<i class="fas fa-qrcode"></i> Scan QR Code';
+}
+
+function saveNotificationSettings() {
+    // Get all toggle states
+    const toggles = document.querySelectorAll('#notificationSettingsModal input[type="checkbox"]');
+    const settings = {};
+    
+    toggles.forEach((toggle, index) => {
+        const settingNames = ['sms', 'email', 'push', 'reminders'];
+        settings[settingNames[index]] = toggle.checked;
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('notificationSettings', JSON.stringify(settings));
+    
+    showNotification('Notification settings saved successfully!', 'success');
+    closeModal('notificationSettingsModal');
+}
+
+function loadNotificationSettings() {
+    const savedSettings = localStorage.getItem('notificationSettings');
+    if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        const toggles = document.querySelectorAll('#notificationSettingsModal input[type="checkbox"]');
+        const settingNames = ['sms', 'email', 'push', 'reminders'];
+        
+        toggles.forEach((toggle, index) => {
+            if (settings[settingNames[index]] !== undefined) {
+                toggle.checked = settings[settingNames[index]];
+            }
+        });
+    }
+}
+
+function startTutorial() {
+    closeModal('helpModal');
+    showNotification('Tutorial started! Follow the highlighted areas.', 'info');
+}
+
+function reportIssue() {
+    closeModal('helpModal');
+    showNotification('Issue report form opened. Describe your problem.', 'info');
+}
+
+function provideFeedback() {
+    closeModal('helpModal');
+    showNotification('Feedback form opened. We value your input!', 'info');
+}
+
+async function logout() {
+    document.getElementById('profileDropdown').style.display = 'none';
+    
+    try {
+        // Clear local data
+        currentUser = null;
+        isOrganizationView = false;
+        currentQueueId = null;
+        selectedService = null;
+        
+        // Remove from localStorage
+        localStorage.removeItem('skipitUser');
+        
+        // Reset UI
+        const loginBtn = document.querySelector('.nav-links .btn-primary');
+        if (loginBtn) {
+            loginBtn.textContent = 'Login';
+            loginBtn.onclick = () => showAuthModal();
+        }
+        
+        // Update profile to guest
+        const profileName = document.querySelector('.profile-name');
+        const profileEmail = document.querySelector('.profile-email');
+        const profileAvatar = document.querySelector('.profile-avatar');
+        
+        if (profileName) profileName.textContent = 'Guest User';
+        if (profileEmail) profileEmail.textContent = 'Not logged in';
+        if (profileAvatar) profileAvatar.textContent = 'GU';
+        
+        // Close modals
+        ['queueStatus', 'providerDashboard'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.remove();
+        });
+        
+        showNotification('Logged out successfully', 'success');
+        console.log('User logged out');
+    } catch (error) {
+        console.error('Logout error:', error);
+        showNotification('Error logging out', 'error');
+    }
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+    const notificationsDropdown = document.getElementById('notificationsDropdown');
+    const profileDropdown = document.getElementById('profileDropdown');
+    const notificationIcon = document.querySelector('.notification-icon');
+    const profileIcon = document.querySelector('.profile-icon');
+    
+    if (notificationsDropdown && !notificationIcon.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+        notificationsDropdown.style.display = 'none';
+    }
+    
+    if (profileDropdown && !profileIcon.contains(event.target) && !profileDropdown.contains(event.target)) {
+        profileDropdown.style.display = 'none';
+    }
+});
+
+// Resource Functions
+function showBestPracticesGuide() {
+    const modal = document.createElement('div');
+    modal.id = 'bestPracticesModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>📚 Best Practices Guide</h3>
+                <span class="modal-close" onclick="closeModal('bestPracticesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="guide-content">
+                    <h4>Digital Queue Management Best Practices for Indian Businesses</h4>
+                    <div class="guide-section">
+                        <h5>1. Pre-Implementation Planning</h5>
+                        <ul>
+                            <li>Analyze current queue patterns and peak hours</li>
+                            <li>Identify bottlenecks in your service delivery</li>
+                            <li>Train staff on digital queue management</li>
+                            <li>Set up proper signage and customer guidance</li>
+                        </ul>
+                    </div>
+                    <div class="guide-section">
+                        <h5>2. Customer Communication</h5>
+                        <ul>
+                            <li>Provide clear instructions in Hindi and English</li>
+                            <li>Use SMS notifications for queue updates</li>
+                            <li>Display estimated wait times prominently</li>
+                            <li>Offer multiple ways to join queues (QR, phone, app)</li>
+                        </ul>
+                    </div>
+                    <div class="guide-section">
+                        <h5>3. Staff Training</h5>
+                        <ul>
+                            <li>Train staff on calling customers efficiently</li>
+                            <li>Implement proper handoff procedures</li>
+                            <li>Monitor queue performance daily</li>
+                            <li>Handle customer complaints professionally</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showIndustryReports() {
+    const modal = document.createElement('div');
+    modal.id = 'reportsModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>📊 Industry Reports</h3>
+                <span class="modal-close" onclick="closeModal('reportsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="reports-list">
+                    <div class="report-item">
+                        <h4>Queue Management in Indian Banking Sector 2024</h4>
+                        <p>Comprehensive analysis of digital queue adoption in major Indian banks</p>
+                        <div class="report-stats">
+                            <span class="stat">📈 65% reduction in wait times</span>
+                            <span class="stat">😊 89% customer satisfaction</span>
+                            <span class="stat">💰 40% cost savings</span>
+                        </div>
+                    </div>
+                    <div class="report-item">
+                        <h4>Healthcare Queue Management Trends</h4>
+                        <p>Digital transformation in Indian hospitals and clinics</p>
+                        <div class="report-stats">
+                            <span class="stat">🏥 500+ hospitals using digital queues</span>
+                            <span class="stat">⏱️ 50% faster patient processing</span>
+                            <span class="stat">📱 78% prefer mobile queue joining</span>
+                        </div>
+                    </div>
+                    <div class="report-item">
+                        <h4>Government Services Digital Adoption</h4>
+                        <p>Queue management in passport offices, RTOs, and other government services</p>
+                        <div class="report-stats">
+                            <span class="stat">🏛️ 200+ government offices</span>
+                            <span class="stat">👥 2M+ citizens served</span>
+                            <span class="stat">⭐ 92% approval rating</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showVideoTutorials() {
+    const modal = document.createElement('div');
+    modal.id = 'videosModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>🎥 Video Tutorials</h3>
+                <span class="modal-close" onclick="closeModal('videosModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="videos-grid">
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <span class="video-duration">5:30</span>
+                        </div>
+                        <h4>Getting Started with SKIPIT</h4>
+                        <p>Complete setup guide for new organizations</p>
+                    </div>
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <span class="video-duration">8:15</span>
+                        </div>
+                        <h4>Managing Multiple Queues</h4>
+                        <p>How to handle different service types efficiently</p>
+                    </div>
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <span class="video-duration">6:45</span>
+                        </div>
+                        <h4>Customer Communication Best Practices</h4>
+                        <p>SMS notifications and customer engagement</p>
+                    </div>
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <span class="video-duration">4:20</span>
+                        </div>
+                        <h4>Analytics Dashboard Overview</h4>
+                        <p>Understanding your queue performance metrics</p>
+                    </div>
+                </div>
+                <div class="video-note">
+                    <p>💡 <strong>Note:</strong> These are demo tutorials. Full video content will be available after registration.</p>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+function startLiveDemo() {
+    const modal = document.createElement('div');
+    modal.id = 'liveDemoModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>🚀 SKIPIT Live Demo</h3>
+                <span class="modal-close" onclick="closeModal('liveDemoModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="demo-tabs">
+                    <button class="tab-btn active" onclick="switchDemoTab('customer')">Customer View</button>
+                    <button class="tab-btn" onclick="switchDemoTab('admin')">Admin Dashboard</button>
+                </div>
+                <div id="customerDemo" class="demo-tab-content active">
+                    <div class="demo-simulation">
+                        <h4>🏥 Apollo Hospital - General Consultation</h4>
+                        <div class="demo-status">
+                            <div class="demo-position">
+                                <span class="label">Your Position:</span>
+                                <span class="value" id="demoPosition">5</span>
+                            </div>
+                            <div class="demo-wait">
+                                <span class="label">Estimated Wait:</span>
+                                <span class="value" id="demoWait">15 minutes</span>
+                            </div>
+                        </div>
+                        <div class="demo-progress-section">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="demoProgressFill" style="width: 60%"></div>
+                            </div>
+                            <p class="progress-text">4 people ahead of you</p>
+                        </div>
+                        <div class="demo-actions">
+                            <button class="btn btn-secondary" onclick="simulateSwap()">🔄 Request Swap</button>
+                            <button class="btn btn-secondary" onclick="simulateDelay()">⏰ Delay Position</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="adminDemo" class="demo-tab-content">
+                    <div class="admin-simulation">
+                        <h4>📊 Queue Management Dashboard</h4>
+                        <div class="admin-stats">
+                            <div class="admin-stat">
+                                <span class="stat-number">25</span>
+                                <span class="stat-label">Active Queues</span>
+                            </div>
+                            <div class="admin-stat">
+                                <span class="stat-number">156</span>
+                                <span class="stat-label">People Waiting</span>
+                            </div>
+                            <div class="admin-stat">
+                                <span class="stat-number">8.5</span>
+                                <span class="stat-label">Avg Wait (min)</span>
+                            </div>
+                        </div>
+                        <div class="admin-queues">
+                            <div class="admin-queue-item">
+                                <span class="queue-name">General Consultation</span>
+                                <span class="queue-count">12 waiting</span>
+                                <button class="btn btn-primary btn-small" onclick="callNextDemo()">Call Next</button>
+                            </div>
+                            <div class="admin-queue-item">
+                                <span class="queue-name">Lab Tests</span>
+                                <span class="queue-count">8 waiting</span>
+                                <button class="btn btn-primary btn-small" onclick="callNextDemo()">Call Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-footer">
+                    <p>💡 This is a live simulation. Try the buttons to see real-time updates!</p>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    startDemoAnimation();
+}
+
+function switchDemoTab(tab) {
+    document.querySelectorAll('.demo-tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.demo-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tab + 'Demo').classList.add('active');
+    event.target.classList.add('active');
+}
+
+function startDemoAnimation() {
+    setInterval(() => {
+        const position = document.getElementById('demoPosition');
+        const wait = document.getElementById('demoWait');
+        const progress = document.getElementById('demoProgressFill');
+        
+        if (position && Math.random() < 0.3) {
+            let pos = parseInt(position.textContent);
+            if (pos > 1) {
+                pos--;
+                position.textContent = pos;
+                wait.textContent = (pos * 3) + ' minutes';
+                progress.style.width = ((5 - pos) / 4 * 100) + '%';
+            }
+        }
+    }, 2000);
+}
+
+function simulateSwap() {
+    showNotification('✅ Position swapped! Moved back by 1 to keep counter busy', 'success');
+    const position = document.getElementById('demoPosition');
+    if (position) {
+        position.textContent = parseInt(position.textContent) + 1;
+    }
+}
+
+function simulateDelay() {
+    showNotification('⏰ Position delayed! Take your time to arrive', 'info');
+    const position = document.getElementById('demoPosition');
+    if (position) {
+        position.textContent = parseInt(position.textContent) + 1;
+    }
+}
+
+function callNextDemo() {
+    showNotification('📢 Next customer called to counter', 'success');
+    event.target.textContent = 'Called!';
+    setTimeout(() => {
+        event.target.textContent = 'Call Next';
+    }, 2000);
+}
 function showSignupModal() {
     alert('Welcome to SKIPIT! 🎉\n\nFree 14-day trial started.\n\nYou will receive an SMS shortly with your registration link.\n\nPhone: Your registered number\nValidity: 14 days\nAll features unlocked!');
     showAuthModal();
@@ -1453,16 +2455,21 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateDemoQueue() {
-    let position = parseInt(document.getElementById('demo-position').textContent);
+    const positionElement = document.getElementById('demo-position');
+    const waitElement = document.getElementById('demo-wait');
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (!positionElement || !waitElement) return; // Exit if elements don't exist
+    
+    let position = parseInt(positionElement.textContent);
     if (position > 1) {
         position--;
-        document.getElementById('demo-position').textContent = position;
+        positionElement.textContent = position;
         
-        let wait = parseInt(document.getElementById('demo-wait').textContent);
+        let wait = parseInt(waitElement.textContent);
         if (wait > 3) wait -= 2;
-        document.getElementById('demo-wait').textContent = wait + ' mins';
+        waitElement.textContent = wait + ' mins';
         
-        let progressFill = document.querySelector('.progress-fill');
         if (progressFill) {
             let newWidth = 100 - (position * 15);
             if (newWidth > 100) newWidth = 100;
@@ -1477,45 +2484,451 @@ function showDashboard() {
     alert('📊 Dashboard View\n\nView all your active queues and real-time metrics at a glance. Track queue positions, wait times, and service availability across locations.');
 }
 
+function toggleQueuesDropdown() {
+    const dropdown = document.getElementById('queuesDropdown');
+    const analyticsDropdown = document.getElementById('analyticsDropdown');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+    
+    // Close other dropdowns
+    if (analyticsDropdown) analyticsDropdown.style.display = 'none';
+    if (settingsDropdown) settingsDropdown.style.display = 'none';
+    
+    // Toggle this dropdown
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleAnalyticsDropdown() {
+    const dropdown = document.getElementById('analyticsDropdown');
+    const queuesDropdown = document.getElementById('queuesDropdown');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+    
+    // Close other dropdowns
+    if (queuesDropdown) queuesDropdown.style.display = 'none';
+    if (settingsDropdown) settingsDropdown.style.display = 'none';
+    
+    // Toggle this dropdown
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleSettingsDropdown() {
+    const dropdown = document.getElementById('settingsDropdown');
+    const queuesDropdown = document.getElementById('queuesDropdown');
+    const analyticsDropdown = document.getElementById('analyticsDropdown');
+    
+    // Close other dropdowns
+    if (queuesDropdown) queuesDropdown.style.display = 'none';
+    if (analyticsDropdown) analyticsDropdown.style.display = 'none';
+    
+    // Toggle this dropdown
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
 function showQueuesModal() {
-    console.log('Queues clicked');
-    let queueList = 'Your Active Queues:\n\n';
-    queueList += '1. SBI Bank Mumbai - Position 12\n';
-    queueList += '   Wait Time: ~18 minutes\n';
-    queueList += '   Status: Active\n\n';
-    queueList += '2. Apollo Hospital - Position 8\n';
-    queueList += '   Wait Time: ~12 minutes\n';
-    queueList += '   Status: Active\n\n';
-    queueList += '3. Passport Office Delhi - Position 15\n';
-    queueList += '   Wait Time: ~25 minutes\n';
-    queueList += '   Status: Waiting';
-    alert(queueList);
+    toggleQueuesDropdown();
 }
 
 function showAnalyticsModal() {
-    console.log('Analytics clicked');
-    let analytics = '📈 Your Queue Analytics\n\n';
-    analytics += 'Total Queues Joined: 156\n';
-    analytics += 'Average Wait Time: 12 minutes\n';
-    analytics += 'Total Time Saved: 28 hours\n';
-    analytics += 'Cancellations: 5\n\n';
-    analytics += 'Most Used Services:\n';
-    analytics += '1. Banking - 45%\n';
-    analytics += '2. Healthcare - 35%\n';
-    analytics += '3. Government - 20%';
-    alert(analytics);
+    toggleAnalyticsDropdown();
 }
 
 function showSettingsModal() {
-    console.log('Settings clicked');
-    let settings = '⚙️ Settings\n\n';
-    settings += 'Account Settings:\n';
-    settings += '• Email Notifications: ON\n';
-    settings += '• SMS Alerts: ON\n';
-    settings += '• Push Notifications: ON\n\n';
-    settings += 'Preferences:\n';
-    settings += '• Language: English\n';
-    settings += '• Theme: Light Mode\n';
-    settings += '• Queue Reminders: 5 min before';
-    alert(settings);
+    toggleSettingsDropdown();
 }
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
+}
+
+function saveSettings() {
+    alert('Settings saved successfully!');
+    closeModal('settingsModal');
+}
+// ROI Calculator Function
+function calculateROI() {
+    const dailyCustomers = parseInt(document.getElementById('dailyCustomers').value) || 100;
+    const waitTime = parseInt(document.getElementById('waitTime').value) || 15;
+    const staffCount = parseInt(document.getElementById('staffCount').value) || 5;
+    
+    // Calculate savings based on SKIPIT's efficiency improvements
+    const timeReduction = 0.65; // 65% reduction in wait time
+    const timeSavedPerCustomer = waitTime * timeReduction;
+    const totalTimeSavedDaily = (dailyCustomers * timeSavedPerCustomer) / 60; // in hours
+    
+    // Cost calculations (Indian context)
+    const avgHourlyWage = 200; // Average hourly wage in India (INR)
+    const dailyCostSavings = totalTimeSavedDaily * avgHourlyWage;
+    const monthlyCostSavings = dailyCostSavings * 30;
+    const annualSavings = monthlyCostSavings * 12;
+    
+    // SKIPIT subscription cost (Professional plan)
+    const monthlySubscription = 2999;
+    const annualSubscription = monthlySubscription * 12;
+    const netAnnualSavings = annualSavings - annualSubscription;
+    const roiPercentage = ((netAnnualSavings / annualSubscription) * 100).toFixed(0);
+    
+    // Display results
+    document.getElementById('timeSaved').textContent = totalTimeSavedDaily.toFixed(1) + ' hours';
+    document.getElementById('costSavings').textContent = '₹' + monthlyCostSavings.toLocaleString('en-IN');
+    document.getElementById('annualROI').textContent = roiPercentage + '%';
+    
+    document.getElementById('roiResults').style.display = 'block';
+    
+    // Show success notification
+    showNotification('ROI calculated successfully! See your potential savings below.', 'success');
+}
+// Integration Details Function
+function showIntegrationDetails(type) {
+    const integrations = {
+        teams: {
+            title: 'Microsoft Teams Integration',
+            icon: 'fab fa-microsoft',
+            features: [
+                'Real-time queue notifications in Teams channels',
+                'Automated alerts when customers arrive',
+                'Staff notifications for queue management',
+                'Integration with Teams calendar',
+                'Custom bot commands for queue status'
+            ],
+            setup: 'Connect your Teams workspace in 3 simple steps',
+            pricing: 'Available in Professional and Enterprise plans'
+        },
+        slack: {
+            title: 'Slack Integration',
+            icon: 'fab fa-slack',
+            features: [
+                'Queue updates in dedicated Slack channels',
+                'Custom slash commands for queue management',
+                'Automated staff notifications',
+                'Integration with Slack workflows',
+                'Real-time customer status updates'
+            ],
+            setup: 'Install SKIPIT Slack app from Slack App Directory',
+            pricing: 'Available in Professional and Enterprise plans'
+        },
+        calendar: {
+            title: 'Google Calendar Integration',
+            icon: 'fas fa-calendar',
+            features: [
+                'Sync appointments with Google Calendar',
+                'Automatic calendar blocking for queue slots',
+                'Meeting reminders and notifications',
+                'Staff schedule management',
+                'Customer appointment confirmations'
+            ],
+            setup: 'Connect your Google account with OAuth 2.0',
+            pricing: 'Available in all plans'
+        },
+        email: {
+            title: 'Email Systems Integration',
+            icon: 'fas fa-envelope',
+            features: [
+                'Automated email confirmations',
+                'Queue position update emails',
+                'Appointment reminder emails',
+                'Custom email templates',
+                'SMTP server integration'
+            ],
+            setup: 'Configure SMTP settings in dashboard',
+            pricing: 'Available in all plans'
+        },
+        sms: {
+            title: 'SMS Gateway Integration',
+            icon: 'fas fa-mobile-alt',
+            features: [
+                'Multi-provider SMS support (Twilio, MSG91, TextLocal)',
+                'Automated SMS notifications in Hindi/English',
+                'Queue position updates via SMS',
+                'Appointment reminders',
+                'Custom SMS templates'
+            ],
+            setup: 'Connect your preferred SMS provider',
+            pricing: 'SMS charges apply as per provider rates'
+        },
+        analytics: {
+            title: 'Analytics Tools Integration',
+            icon: 'fas fa-chart-bar',
+            features: [
+                'Export data to Google Analytics',
+                'Power BI dashboard integration',
+                'Custom reporting APIs',
+                'Real-time data streaming',
+                'Advanced metrics and KPIs'
+            ],
+            setup: 'API keys and webhook configuration',
+            pricing: 'Available in Professional and Enterprise plans'
+        }
+    };
+
+    const integration = integrations[type];
+    if (!integration) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'integrationModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="${integration.icon}" style="font-size: 24px; color: #2563eb;"></i>
+                    <h3>${integration.title}</h3>
+                </div>
+                <span class="modal-close" onclick="closeModal('integrationModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="integration-details">
+                    <div class="features-section">
+                        <h4>Features & Capabilities</h4>
+                        <ul class="feature-list">
+                            ${integration.features.map(feature => `<li><i class="fas fa-check"></i> ${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="setup-section">
+                        <h4>Setup Process</h4>
+                        <p><i class="fas fa-cog"></i> ${integration.setup}</p>
+                    </div>
+                    <div class="pricing-section">
+                        <h4>Pricing & Availability</h4>
+                        <p><i class="fas fa-tag"></i> ${integration.pricing}</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="startIntegrationSetup('${type}')">
+                            <i class="fas fa-rocket"></i> Start Integration
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewIntegrationDocs('${type}')">
+                            <i class="fas fa-book"></i> View Documentation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function startIntegrationSetup(type) {
+    closeModal('integrationModal');
+    showNotification(`Starting ${type} integration setup...`, 'info');
+    
+    setTimeout(() => {
+        showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} integration configured successfully!`, 'success');
+    }, 2000);
+}
+
+function viewIntegrationDocs(type) {
+    showNotification(`Opening ${type} integration documentation...`, 'info');
+    // In a real app, this would open documentation
+}
+// Fixed ROI Calculator Function
+function calculateROI() {
+    try {
+        const dailyCustomers = parseInt(document.getElementById('dailyCustomers').value) || 100;
+        const waitTime = parseInt(document.getElementById('waitTime').value) || 15;
+        const staffCount = parseInt(document.getElementById('staffCount').value) || 5;
+        
+        if (dailyCustomers <= 0 || waitTime <= 0 || staffCount <= 0) {
+            showNotification('Please enter valid positive numbers', 'error');
+            return;
+        }
+        
+        const timeReduction = 0.65;
+        const timeSavedPerCustomer = waitTime * timeReduction;
+        const totalTimeSavedDaily = (dailyCustomers * timeSavedPerCustomer) / 60;
+        
+        const avgHourlyWage = 200;
+        const dailyCostSavings = totalTimeSavedDaily * avgHourlyWage;
+        const monthlyCostSavings = dailyCostSavings * 30;
+        const annualSavings = monthlyCostSavings * 12;
+        
+        const monthlySubscription = 2999;
+        const annualSubscription = monthlySubscription * 12;
+        const netAnnualSavings = annualSavings - annualSubscription;
+        const roiPercentage = ((netAnnualSavings / annualSubscription) * 100).toFixed(0);
+        
+        document.getElementById('timeSaved').textContent = totalTimeSavedDaily.toFixed(1) + ' hours';
+        document.getElementById('costSavings').textContent = '₹' + Math.round(monthlyCostSavings).toLocaleString('en-IN');
+        document.getElementById('annualROI').textContent = roiPercentage + '%';
+        
+        const resultsDiv = document.getElementById('roiResults');
+        resultsDiv.style.display = 'block';
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        showNotification('ROI calculated successfully!', 'success');
+        
+    } catch (error) {
+        showNotification('Error calculating ROI. Please try again.', 'error');
+    }
+}
+// Customer Journey Orchestration Details Function
+function showJourneyDetails(type) {
+    const journeyFeatures = {
+        routing: {
+            title: 'Smart Routing System',
+            icon: 'fas fa-route',
+            description: 'Intelligent customer direction based on service requirements and real-time availability',
+            features: [
+                'Automatic service type detection based on customer input',
+                'Real-time counter availability checking',
+                'Priority routing for VIP customers and special needs',
+                'Load balancing across multiple service counters',
+                'Integration with customer history and preferences'
+            ],
+            benefits: [
+                'Reduce customer confusion by 80%',
+                'Optimize counter utilization by 45%',
+                'Decrease average service time by 25%'
+            ]
+        },
+        analytics: {
+            title: 'Predictive Analytics Engine',
+            icon: 'fas fa-brain',
+            description: 'AI-powered forecasting and demand prediction for optimal resource planning',
+            features: [
+                'Historical data analysis and pattern recognition',
+                'Peak hour prediction with 95% accuracy',
+                'Seasonal demand forecasting',
+                'Staff requirement optimization',
+                'Customer behavior analytics'
+            ],
+            benefits: [
+                'Reduce overstaffing costs by 30%',
+                'Improve customer satisfaction by 40%',
+                'Optimize resource allocation efficiency'
+            ]
+        },
+        personalized: {
+            title: 'Personalized Customer Experience',
+            icon: 'fas fa-user-cog',
+            description: 'Tailored waiting experience based on individual customer preferences and history',
+            features: [
+                'Customer preference learning and adaptation',
+                'Personalized wait time estimates',
+                'Customized notification preferences',
+                'Service history tracking and recommendations',
+                'Multi-language support based on customer profile'
+            ],
+            benefits: [
+                'Increase customer loyalty by 60%',
+                'Reduce complaint rates by 50%',
+                'Improve overall satisfaction scores'
+            ]
+        },
+        optimization: {
+            title: 'Real-time Queue Optimization',
+            icon: 'fas fa-chart-network',
+            description: 'Dynamic queue management with continuous flow optimization based on live data',
+            features: [
+                'Live queue performance monitoring',
+                'Automatic bottleneck detection and resolution',
+                'Dynamic priority adjustments',
+                'Real-time staff reallocation suggestions',
+                'Continuous feedback loop integration'
+            ],
+            benefits: [
+                'Reduce wait times by 65%',
+                'Improve operational efficiency by 35%',
+                'Enhance staff productivity metrics'
+            ]
+        }
+    };
+
+    const journey = journeyFeatures[type];
+    if (!journey) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'journeyModal';
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="${journey.icon}" style="font-size: 24px; color: #2563eb;"></i>
+                    <h3>${journey.title}</h3>
+                </div>
+                <span class="modal-close" onclick="closeModal('journeyModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="journey-details">
+                    <p class="journey-description">${journey.description}</p>
+                    
+                    <div class="features-section">
+                        <h4>Key Features</h4>
+                        <ul class="feature-list">
+                            ${journey.features.map(feature => `<li><i class="fas fa-check"></i> ${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="benefits-section">
+                        <h4>Business Benefits</h4>
+                        <ul class="benefit-list">
+                            ${journey.benefits.map(benefit => `<li><i class="fas fa-chart-line"></i> ${benefit}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="startJourneySetup('${type}')">
+                            <i class="fas fa-rocket"></i> Enable Feature
+                        </button>
+                        <button class="btn btn-secondary" onclick="scheduleJourneyDemo('${type}')">
+                            <i class="fas fa-calendar"></i> Schedule Demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function startJourneySetup(type) {
+    closeModal('journeyModal');
+    showNotification(`Setting up ${type} feature...`, 'info');
+    
+    setTimeout(() => {
+        showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} feature enabled successfully!`, 'success');
+    }, 2000);
+}
+
+function scheduleJourneyDemo(type) {
+    closeModal('journeyModal');
+    showNotification(`Demo scheduled for ${type} feature. Our team will contact you soon.`, 'success');
+}
+// Fixed Integration Setup Function
+function startIntegrationSetup(type) {
+    closeModal('integrationModal');
+    showNotification(`🔧 Starting ${type} integration setup...`, 'info');
+    
+    setTimeout(() => {
+        showNotification(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} integration configured successfully!`, 'success');
+    }, 2000);
+}
+
+function viewIntegrationDocs(type) {
+    showNotification(`📖 Opening ${type} integration documentation...`, 'info');
+}
+// Mobile Menu Toggle Function
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu.style.display === 'block') {
+        mobileMenu.style.display = 'none';
+    } else {
+        mobileMenu.style.display = 'block';
+    }
+}
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    
+    if (mobileMenu && menuToggle && !menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+        mobileMenu.style.display = 'none';
+    }
+});

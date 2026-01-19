@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKIPIT - Digital Queue Management for India | Skip The Queue, Save Your Time</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span>SKIPIT</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#about" class="nav-link">About</a>
+                <button class="btn btn-primary" onclick="showAuthModal()">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="gradient-blob blob-1"></div>
+            <div class="gradient-blob blob-2"></div>
+            <div class="gradient-blob blob-3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Skip the Queue, Save Your Time</h1>
+                <p class="hero-subtitle">India's leading digital queue management platform. Join virtual queues at banks, hospitals, and government offices. Real-time tracking, instant notifications, and zero physical waiting.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1000+</span>
+                        <span class="stat-label">Service Providers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Indian Cities</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-large" onclick="showJoinQueueModal()">
+                        <i class="fas fa-play-circle"></i> Join Queue Now
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="showQRScanModal()">
+                        <i class="fas fa-qrcode"></i> Scan QR Code
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="modern-interface-mockup">
+                    <div class="interface-header">
+                        <div class="header-brand">SKIPIT</div>
+                        <div class="header-menu">
+                            <div class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                                <i class="fas fa-moon" id="themeIcon"></i>
+                            </div>
+                            <div class="notification-icon" onclick="toggleNotifications()">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </div>
+                            <div class="profile-icon" onclick="toggleProfileMenu()">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="interface-body">
+                        <!-- Left Sidebar -->
+                        <div class="interface-sidebar">
+                            <div class="sidebar-item active" onclick="showDashboard()">
+                                <i class="fas fa-layout"></i>
+                                <span>Dashboard</span>
+                            </div>
+                            <div class="sidebar-item" onclick="showQueuesModal()">
+                                <i class="fas fa-bars"></i>
+                                <span>Queues</span>
+                            </div>
+                            <div class="sidebar-item" onclick="showAnalyticsModal()">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </div>
+                            <div class="sidebar-item" onclick="showSettingsModal()">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </div>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="interface-main">
+                            <div class="content-header">
+                                <h2>Queue Overview</h2>
+                                <p>Real-time status across all locations</p>
+                            </div>
+
+                            <!-- Metrics Row -->
+                            <div class="metrics-grid">
+                                <div class="metric-card">
+                                    <div class="metric-icon active-customers">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Active Customers</p>
+                                        <p class="metric-value">1,248</p>
+                                    </div>
+                                </div>
+
+                                <div class="metric-card">
+                                    <div class="metric-icon avg-wait">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Avg Wait Time</p>
+                                        <p class="metric-value">8 min</p>
+                                    </div>
+                                </div>
+
+                                <div class="metric-card">
+                                    <div class="metric-icon satisfaction">
+                                        <i class="fas fa-smile"></i>
+                                    </div>
+                                    <div class="metric-content">
+                                        <p class="metric-label">Satisfaction</p>
+                                        <p class="metric-value">96%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Queue List -->
+                            <div class="queue-list-section">
+                                <h3>Active Locations</h3>
+                                <div class="queue-list-items">
+                                    <div class="list-item">
+                                        <div class="item-icon">SB</div>
+                                        <div class="item-details">
+                                            <p class="item-name">SBI Bank Mumbai</p>
+                                            <p class="item-status">12 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
+
+                                    <div class="list-item">
+                                        <div class="item-icon ah">AH</div>
+                                        <div class="item-details">
+                                            <p class="item-name">Apollo Hospital</p>
+                                            <p class="item-status">8 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
+
+                                    <div class="list-item">
+                                        <div class="item-icon po">PO</div>
+                                        <div class="item-details">
+                                            <p class="item-name">Passport Office Delhi</p>
+                                            <p class="item-status">15 in queue</p>
+                                        </div>
+                                        <span class="item-badge">Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Services Available Across India</h2>
+                <p class="section-subtitle">Join digital queues at your preferred service provider in 50+ Indian cities</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon-box">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>Banking Services 🏦</h3>
+                    <p>Digital queues at major Indian banks</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> SBI, HDFC, ICICI, Axis</li>
+                        <li><i class="fas fa-check"></i> Kotak, YES Bank, IndusInd</li>
+                        <li><i class="fas fa-check"></i> Cash, Deposits, Account Services</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon-box">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>Healthcare Services 🏥</h3>
+                    <p>Skip waiting at major hospitals</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> Apollo, Max, Fortis, Manipal</li>
+                        <li><i class="fas fa-check"></i> Government Hospitals</li>
+                        <li><i class="fas fa-check"></i> Consultations, Tests & Appointments</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon-box">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Government Services 🏛️</h3>
+                    <p>Digital queues for all government offices</p>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check"></i> Passport, Aadhaar, Driving License</li>
+                        <li><i class="fas fa-check"></i> PAN, Voter ID, Registration</li>
+                        <li><i class="fas fa-check"></i> All Government Service Centers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works in 4 Easy Steps</h2>
+                <p class="section-subtitle">From registration to getting your turn - a seamless digital queue experience</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-number">1</div>
+                    <h3>Register & Verify</h3>
+                    <p>Sign up with your 10-digit Indian phone number and verify via OTP. Complete your profile in seconds.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="feature-connector"></div>
+                <div class="feature-item">
+                    <div class="feature-number">2</div>
+                    <h3>Find Services</h3>
+                    <p>Use GPS to discover nearby providers or search specific locations, banks, hospitals across 50+ Indian cities.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-map-location-dot"></i>
+                    </div>
+                </div>
+                <div class="feature-connector"></div>
+                <div class="feature-item">
+                    <div class="feature-number">3</div>
+                    <h3>Join Queue</h3>
+                    <p>Join digital queues remotely from home or scan QR codes at locations. Get your token number instantly.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket"></i>
+                    </div>
+                </div>
+                <div class="feature-connector"></div>
+                <div class="feature-item">
+                    <div class="feature-number">4</div>
+                    <h3>Track & Wait</h3>
+                    <p>Monitor real-time position updates, receive SMS notifications when it's your turn. Bilingual support (Hindi/English).</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-wrapper">
+                <div class="about-text">
+                    <h2>Why Choose SKIPIT?</h2>
+                    <p>SKIPIT revolutionizes queue management across India by eliminating physical waiting lines at banks, hospitals, and government offices. Our secure, user-friendly platform enables customers to join queues remotely, track their position in real-time, and receive instant notifications when it's their turn.</p>
+                    <p>Operating in major Indian cities including Delhi, Mumbai, Bangalore, Chennai, Hyderabad, Pune, Kolkata, and 45+ more, SKIPIT serves as a bridge between customers and service providers, optimizing service delivery and enhancing customer satisfaction.</p>
+                    <button class="btn btn-primary" onclick="showProviderModal()" style="margin-top: 20px;">
+                        <i class="fas fa-building"></i> For Service Providers
+                    </button>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="50000">50K+</div>
+                        <div class="stat-label">Active Users</div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="1000">1000+</div>
+                        <div class="stat-label">Service Providers</div>
+                        <div class="stat-icon"><i class="fas fa-store"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-target="50">50+</div>
+                        <div class="stat-label">Indian Cities</div>
+                        <div class="stat-icon"><i class="fas fa-city"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="problem-content">
+                <h2>Did you know?</h2>
+                <p class="problem-stat">7 out of 10 customers won't return after a poor service experience</p>
+                <p class="problem-description">Long waits, scheduling chaos, and impersonal interactions aren't just frustrating—they're lost opportunities. SKIPIT helps you increase customer retention, transform your operations, and keep customers coming back.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section class="industries-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Solutions for Every Industry</h2>
+                <p class="section-subtitle">SKIPIT adapts to your business needs across all sectors</p>
+            </div>
+            <div class="industries-grid">
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <h3>Retail & Luxury</h3>
+                    <p>Premium customer experiences with VIP management, appointment scheduling, and personalized service flows.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Retail Chains</h3>
+                    <p>Manage multiple store locations efficiently with centralized control and real-time queue visibility across all branches.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3>Government</h3>
+                    <p>Streamline citizen services, reduce wait times at offices, and improve operational efficiency with digital queues.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Education</h3>
+                    <p>Manage admission queues, counseling appointments, and registration processes with ease and transparency.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>Healthcare</h3>
+                    <p>HIPAA-compliant queue management for clinics, hospitals, and diagnostic centers with privacy protection.</p>
+                </div>
+                <div class="industry-card">
+                    <div class="industry-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Other Services</h3>
+                    <p>From banking to hospitality, SKIPIT adapts to any business requiring efficient customer flow management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products/Features Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">All-in-One Queue Management Solution</h2>
+                <p class="section-subtitle">Complete tools for managing customer flow and operations</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Appointment System</h3>
+                    <p>Allow customers to book appointments online, reduce no-shows by 80% with automated reminders, and manage schedules efficiently.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Online Booking</li>
+                        <li><i class="fas fa-check"></i> Automated Reminders</li>
+                        <li><i class="fas fa-check"></i> Calendar Integration</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Virtual Branch</h3>
+                    <p>Complete digital transformation with video call services. Serve customers remotely without physical visits with secure, contactless service.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> Contactless Service</li>
+                        <li><i class="fas fa-check"></i> Secure Communication</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Performance Analytics</h3>
+                    <p>Real-time dashboards showing wait times, customer satisfaction, and staff productivity. Data-driven insights to optimize operations.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Real-time Dashboards</li>
+                        <li><i class="fas fa-check"></i> Wait Time Analytics</li>
+                        <li><i class="fas fa-check"></i> Staff Performance</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-map-network"></i>
+                    </div>
+                    <h3>Multi-Location Management</h3>
+                    <p>Manage unlimited locations, staff, and services from one powerful dashboard with real-time visibility across all sites.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Centralized Control</li>
+                        <li><i class="fas fa-check"></i> Multiple Locations</li>
+                        <li><i class="fas fa-check"></i> Instant Alerts</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Customer Communication</h3>
+                    <p>Automated SMS and push notifications keep customers informed. Reduce customer anxiety and increase satisfaction by 97%.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> SMS Notifications</li>
+                        <li><i class="fas fa-check"></i> Push Alerts</li>
+                        <li><i class="fas fa-check"></i> Email Updates</li>
+                    </ul>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Easy Setup</h3>
+                    <p>Get operational in under 10 minutes with zero technical expertise required. Intuitive setup wizard automatically configures your system.</p>
+                    <ul class="feature-highlights">
+                        <li><i class="fas fa-check"></i> Quick Setup</li>
+                        <li><i class="fas fa-check"></i> No Code Required</li>
+                        <li><i class="fas fa-check"></i> Instant Deploy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section class="clients-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Trusted by Leading Organizations</h2>
+                <p class="section-subtitle">Thousands of businesses in India rely on SKIPIT</p>
+            </div>
+            <div class="clients-grid">
+                <div class="client-logo">
+                    <i class="fas fa-university"></i>
+                    <p>State Bank of India</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-building"></i>
+                    <p>HDFC Bank</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-hospital"></i>
+                    <p>Apollo Hospitals</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-landmark"></i>
+                    <p>Passport Office</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-clinic-medical"></i>
+                    <p>Max Healthcare</p>
+                </div>
+                <div class="client-logo">
+                    <i class="fas fa-university"></i>
+                    <p>ICICI Bank</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-subtitle">Real success stories from organizations using SKIPIT</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"SKIPIT has been invaluable for helping us manage queues during peak hours and year-round. Customer satisfaction has increased significantly."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RS</div>
+                        <div>
+                            <p class="author-name">Rajesh Singh</p>
+                            <p class="author-role">Branch Manager, SBI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The analytics dashboard gave us insights we never had before. We reduced wait times by 60% and improved staff efficiency dramatically."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AK</div>
+                        <div>
+                            <p class="author-name">Aarti Kumar</p>
+                            <p class="author-role">Operations Manager, Apollo Hospital</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Setup was incredibly easy - we were operational within 10 minutes. The customer support team is always helpful and responsive to our needs."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PJ</div>
+                        <div>
+                            <p class="author-name">Priya Joshi</p>
+                            <p class="author-role">Director, Passport Seva Kendra</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security & Compliance Section -->
+    <section class="security-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Enterprise-Grade Security & Compliance</h2>
+                <p class="section-subtitle">Your data is protected with industry-leading security standards</p>
+            </div>
+            <div class="security-grid">
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>SOC 2 Certified</h3>
+                    <p>We adhere to SOC 2 security standards for enterprise-level data protection and compliance.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>HIPAA Compliant</h3>
+                    <p>Healthcare-grade encryption ensuring patient data privacy and regulatory compliance for medical institutions.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>GDPR & CCPA</h3>
+                    <p>Full compliance with global data protection regulations including GDPR (EU) and CCPA (California).</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>SSO/SAML 2.0 & MFA</h3>
+                    <p>Enterprise authentication with single sign-on and multi-factor authentication for enhanced security.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Automated Data Anonymization</h3>
+                    <p>Customer data is automatically anonymized on schedule to protect privacy and comply with regulations.</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>99.5% Uptime SLA</h3>
+                    <p>Guaranteed availability with formal uptime agreement ensuring your queues are always operational.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Choose the perfect plan for your business</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-badge">Popular</div>
+                    <h3>Basic</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">999</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">Perfect for small shops and clinics</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Upto 5 Counters</li>
+                        <li><i class="fas fa-check"></i> 1 Location</li>
+                        <li><i class="fas fa-check"></i> Basic Analytics</li>
+                        <li><i class="fas fa-times"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> SMS Notifications</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Get Started</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-badge featured">Most Popular</div>
+                    <h3>Professional</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">2,999</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">For growing banks and hospitals</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Upto 20 Counters</li>
+                        <li><i class="fas fa-check"></i> 5 Locations</li>
+                        <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                        <li><i class="fas fa-check"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Get Started</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-badge">Enterprise</div>
+                    <h3>Enterprise</h3>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">Custom</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <p class="pricing-description">For large organizations and networks</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited Counters</li>
+                        <li><i class="fas fa-check"></i> Unlimited Locations</li>
+                        <li><i class="fas fa-check"></i> Custom Analytics</li>
+                        <li><i class="fas fa-check"></i> All Features</li>
+                        <li><i class="fas fa-check"></i> Dedicated Support</li>
+                    </ul>
+                    <button class="btn btn-secondary btn-full">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="resources-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Resources & Knowledge Hub</h2>
+                <p class="section-subtitle">Learn best practices, get insights, and stay updated with queue management trends</p>
+            </div>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Best Practices Guide</h3>
+                    <p>Complete guide to implementing digital queue management in Indian businesses</p>
+                    <a href="#" class="resource-link" onclick="showBestPracticesGuide()">Read Guide <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Industry Reports</h3>
+                    <p>Latest trends and statistics on queue management in India's service sector</p>
+                    <a href="#" class="resource-link" onclick="showIndustryReports()">View Reports <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Video Tutorials</h3>
+                    <p>Step-by-step tutorials on setting up and managing your digital queues</p>
+                    <a href="#" class="resource-link" onclick="showVideoTutorials()">Watch Videos <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Case Studies</h3>
+                    <p>Success stories from banks, hospitals, and government offices across India</p>
+                    <a href="#" class="resource-link">Read Stories <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Section -->
+    <section class="demo-section">
+        <div class="container">
+            <div class="demo-content">
+                <div class="demo-text">
+                    <h2>See SKIPIT in Action</h2>
+                    <p>Experience our queue management system with a live interactive demo. Test all features without any setup.</p>
+                    <div class="demo-features">
+                        <div class="demo-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Real-time queue simulation</span>
+                        </div>
+                        <div class="demo-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Customer and admin dashboards</span>
+                        </div>
+                        <div class="demo-feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>SMS and notification system</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-large" onclick="startLiveDemo()">
+                        <i class="fas fa-play"></i> Start Live Demo
+                    </button>
+                </div>
+                <div class="demo-preview">
+                    <div class="demo-screen">
+                        <div class="demo-header">
+                            <div class="demo-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="demo-title">SKIPIT Demo</span>
+                        </div>
+                        <div class="demo-body">
+                            <div class="demo-queue-item">
+                                <span class="demo-queue-name">SBI Bank Mumbai</span>
+                                <span class="demo-queue-count">12 in queue</span>
+                            </div>
+                            <div class="demo-queue-item">
+                                <span class="demo-queue-name">Apollo Hospital</span>
+                                <span class="demo-queue-count">8 in queue</span>
+                            </div>
+                            <div class="demo-progress">
+                                <div class="demo-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Eliminate Waiting Lines?</h2>
+                <p>Start your free 14-day trial today. No credit card required.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary btn-large" onclick="showSignupModal()">
+                        <i class="fas fa-play-circle"></i> Start Free Trial
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="contactSales()">
+                        <i class="fas fa-phone"></i> Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login to SKIPIT</h3>
+                <span class="modal-close" onclick="closeModal('authModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" onclick="switchTab('customer')">Customer</button>
+                    <button class="tab-btn" onclick="switchTab('provider')">Provider</button>
+                </div>
+                <div id="customerTab" class="tab-content active">
+                    <form id="customerLoginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="customerEmail" placeholder="your@gmail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="customerPassword" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
+                        <p style="text-align: center; margin-top: 15px; font-size: 14px; color: #6b7280;">
+                            Don't have an account? One will be created automatically.
+                        </p>
+                    </form>
+                </div>
+                <div id="providerTab" class="tab-content">
+                    <form id="providerLoginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="providerEmail" placeholder="admin@bank.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="providerPassword" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Queue Modal -->
+    <div id="joinQueueModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Join Digital Queue</h3>
+                <span class="modal-close" onclick="closeModal('joinQueueModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="location-search">
+                    <div class="form-group">
+                        <label>Search Location</label>
+                        <input type="text" id="locationSearch" placeholder="Enter city or address">
+                        <button class="btn btn-secondary" onclick="getCurrentLocation()">
+                            <i class="fas fa-map-marker-alt"></i> Use Current Location
+                        </button>
+                    </div>
+                </div>
+                <div class="services-list" id="servicesList">
+                    <!-- Services will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Provider Modal -->
+    <div id="providerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Provider Dashboard</h3>
+                <span class="modal-close" onclick="closeModal('providerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="provider-options">
+                    <button class="btn btn-primary btn-full" onclick="showRegisterOrgModal()">Register Organization</button>
+                    <button class="btn btn-secondary btn-full" onclick="showManageQueuesModal()">Manage Queues</button>
+                    <button class="btn btn-secondary btn-full" onclick="showAnalyticsDashboard()">Analytics Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scan Modal -->
+    <div id="qrScanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Scan QR Code to Join Queue</h3>
+                <span class="modal-close" onclick="closeModal('qrScanModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="qr-scanner-container">
+                    <video id="qrVideo" autoplay></video>
+                    <div class="qr-overlay"></div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #6b7280;">Position the QR code within the frame</p>
+                <button class="btn btn-secondary btn-full" onclick="simulateQRScan()">Simulate QR Scan (Demo)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Organization Modal -->
+    <div id="registerOrgModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Register Your Organization</h3>
+                <span class="modal-close" onclick="closeModal('registerOrgModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="registerOrgForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Organization Name</label>
+                            <input type="text" id="orgName" placeholder="Bank of America" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Organization Type</label>
+                            <select id="orgType" required>
+                                <option value="">Select Type</option>
+                                <option value="bank">Bank</option>
+                                <option value="hospital">Hospital</option>
+                                <option value="government">Government Office</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="orgAddress" placeholder="123 Main St, City, State" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <select id="orgCity" required>
+                                <option value="">Select City</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Jaipur">Jaipur</option>
+                                <option value="Lucknow">Lucknow</option>
+                                <option value="Indore">Indore</option>
+                                <option value="Kochi">Kochi</option>
+                                <option value="Nagpur">Nagpur</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Surat">Surat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <select id="orgState" required>
+                                <option value="">Select State</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" id="orgCountry" placeholder="India" value="India" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" id="orgEmail" placeholder="contact@organization.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="tel" id="orgPhone" placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Register Organization</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Queues Modal -->
+    <div id="manageQueuesModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Manage Active Queues</h3>
+                <span class="modal-close" onclick="closeModal('manageQueuesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="activeQueuesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Queue Modal -->
+    <div id="endQueueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>End Queue</h3>
+                <span class="modal-close" onclick="closeModal('endQueueModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="endQueueForm">
+                    <div class="form-group">
+                        <label>Queue Name</label>
+                        <input type="text" id="endQueueName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason for Ending Queue</label>
+                        <select id="endQueueReason" required>
+                            <option value="">Select Reason</option>
+                            <option value="end_of_day">End of Business Day</option>
+                            <option value="technical_issue">Technical Issue</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="staff_unavailable">Staff Unavailable</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Details (Optional)</label>
+                        <textarea id="endQueueDetails" rows="3" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="notifyUsers" checked>
+                            <span>Notify all users in queue</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">End Queue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Request Notification (Organization) -->
+    <div id="queueRequestNotification" class="queue-request-popup" style="display: none;">
+        <div class="request-card">
+            <div class="request-header">
+                <i class="fas fa-user-clock"></i>
+                <h4>New Queue Request</h4>
+            </div>
+            <div class="request-body">
+                <p><strong>User:</strong> <span id="requestUserName"></span></p>
+                <p><strong>Phone:</strong> <span id="requestUserPhone"></span></p>
+                <p><strong>Queue:</strong> <span id="requestQueueName"></span></p>
+                <p><strong>Time:</strong> <span id="requestTime"></span></p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-primary" onclick="handleQueueRequest(true)">Accept</button>
+                <button class="btn btn-secondary" onclick="handleQueueRequest(false)">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Status Modal -->
+    <div id="userStatusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Queue Request Status</h3>
+                <span class="modal-close" onclick="closeModal('userStatusModal')">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 40px;">
+                <div id="statusIcon" style="font-size: 64px; margin-bottom: 20px;"></div>
+                <h3 id="statusTitle" style="margin-bottom: 15px;"></h3>
+                <p id="statusMessage" style="color: #6b7280; font-size: 16px;"></p>
+                <button class="btn btn-primary" onclick="closeModal('userStatusModal')" style="margin-top: 20px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purpose Modal -->
+    <div id="purposeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tell Us Your Purpose</h3>
+                <span class="modal-close" onclick="closeModal('purposeModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">To save time, briefly tell us what you need:</p>
+                <form id="purposeForm">
+                    <div class="form-group">
+                        <label>Select Service Type</label>
+                        <select id="serviceType" required onchange="updatePurposeOptions()">
+                            <option value="">Choose service...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brief Description (Optional)</label>
+                        <textarea id="purposeDescription" rows="3" placeholder="E.g., Need to update address, apply for new card, etc." style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Documents you have (Optional)</label>
+                        <input type="text" id="documents" placeholder="E.g., Aadhaar, PAN, Passport">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Submit & Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate QR Modal -->
+    <div id="generateQRModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Queue QR Code</h3>
+                <span class="modal-close" onclick="closeModal('generateQRModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="qrCodeContainer" style="text-align: center; margin: 20px 0;"></div>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">Users can scan this QR code to join the queue</p>
+                <button class="btn btn-primary btn-full" onclick="downloadQR()">Download QR Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Dropdown -->
+    <div id="notificationsDropdown" class="dropdown-menu notifications-dropdown" style="display: none;">
+        <div class="dropdown-header">
+            <h4>Notifications</h4>
+            <button class="clear-all-btn" onclick="clearAllNotifications()">Clear All</button>
+        </div>
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Your turn is coming up!</p>
+                    <p class="notification-text">SBI Bank Mumbai - 2 people ahead</p>
+                    <span class="notification-time">2 min ago</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Queue joined successfully</p>
+                    <p class="notification-text">Apollo Hospital - Token #A15</p>
+                    <span class="notification-time">15 min ago</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Service reminder</p>
+                    <p class="notification-text">Bring required documents</p>
+                    <span class="notification-time">1 hour ago</span>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown-footer">
+            <button class="btn btn-secondary btn-small" onclick="viewAllNotifications()">View All</button>
+        </div>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div id="profileDropdown" class="dropdown-menu profile-dropdown" style="display: none;">
+        <div class="profile-header">
+            <div class="profile-avatar">RS</div>
+            <div class="profile-info">
+                <p class="profile-name">Rajesh Singh</p>
+                <p class="profile-email">rajesh@example.com</p>
+            </div>
+        </div>
+        <div class="profile-menu">
+            <a href="#" class="profile-menu-item" onclick="showMyQueues()">
+                <i class="fas fa-list"></i>
+                <span>My Queues</span>
+            </a>
+            <a href="#" class="profile-menu-item" onclick="showProfile()">
+                <i class="fas fa-user"></i>
+                <span>Profile Settings</span>
+            </a>
+            <a href="#" class="profile-menu-item" onclick="showNotificationSettings()">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+            <a href="#" class="profile-menu-item" onclick="showHelp()">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Complete Service Modal -->
+    <div id="completeServiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Complete Service</h3>
+                <span class="modal-close" onclick="closeModal('completeServiceModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">Patient: <strong id="completePatientName"></strong></p>
+                <div class="form-group">
+                    <label>Does patient need additional services?</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="completeWithoutHandoff()" style="flex: 1;">No, Complete</button>
+                        <button class="btn btn-primary" onclick="showHandoffOptions()" style="flex: 1;">Yes, Handoff</button>
+                    </div>
+                </div>
+                <div id="handoffOptions" style="display: none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Select Next Service</label>
+                        <select id="nextService" class="form-control">
+                            <option value="">Choose service...</option>
+                            <option value="Pharmacy">Pharmacy</option>
+                            <option value="Lab Tests">Lab Tests</option>
+                            <option value="X-Ray">X-Ray</option>
+                            <option value="Billing">Billing</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="completeWithHandoff()">Complete & Handoff</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-clock"></i>
+                    <span>SKIPIT</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#services">Services</a>
+                    <a href="#about">About</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy;SKIPIT. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+    <script src="analytics.js"></script>
+</body>
+</html>
