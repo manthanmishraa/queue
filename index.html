@@ -72,9 +72,6 @@
                     <button class="btn btn-primary btn-large" onclick="showJoinQueueModal()">
                         <i class="fas fa-play-circle"></i> Join Queue Now
                     </button>
-                    <button class="btn btn-secondary btn-large" onclick="showQRScanModal()">
-                        <i class="fas fa-qrcode"></i> Scan QR Code
-                    </button>
                 </div>
             </div>
             <div class="hero-image">
@@ -1147,6 +1144,319 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-full">Login</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Queue Modal -->
+    <div id="joinQueueModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Join Digital Queue</h3>
+                <span class="modal-close" onclick="closeModal('joinQueueModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="location-search">
+                    <div class="form-group">
+                        <label>Search Location</label>
+                        <input type="text" id="locationSearch" placeholder="Enter city or address">
+                        <button class="btn btn-secondary" onclick="getCurrentLocation()">
+                            <i class="fas fa-map-marker-alt"></i> Use Current Location
+                        </button>
+                    </div>
+                </div>
+                <div class="services-list" id="servicesList">
+                    <!-- Services will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Provider Modal -->
+    <div id="providerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Provider Dashboard</h3>
+                <span class="modal-close" onclick="closeModal('providerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="provider-options">
+                    <button class="btn btn-primary btn-full" onclick="showRegisterOrgModal()">Register Organization</button>
+                    <button class="btn btn-secondary btn-full" onclick="showManageQueuesModal()">Manage Queues</button>
+                    <button class="btn btn-secondary btn-full" onclick="showAnalyticsDashboard()">Analytics Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scan Modal -->
+    <div id="qrScanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Scan QR Code to Join Queue</h3>
+                <span class="modal-close" onclick="closeModal('qrScanModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="qr-scanner-container">
+                    <video id="qrVideo" autoplay></video>
+                    <div class="qr-overlay"></div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #6b7280;">Position the QR code within the frame</p>
+                <button class="btn btn-secondary btn-full" onclick="simulateQRScan()">Simulate QR Scan (Demo)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Organization Modal -->
+    <div id="registerOrgModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Register Your Organization</h3>
+                <span class="modal-close" onclick="closeModal('registerOrgModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="registerOrgForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Organization Name</label>
+                            <input type="text" id="orgName" placeholder="Bank of America" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Organization Type</label>
+                            <select id="orgType" required>
+                                <option value="">Select Type</option>
+                                <option value="bank">Bank</option>
+                                <option value="hospital">Hospital</option>
+                                <option value="government">Government Office</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="orgAddress" placeholder="123 Main St, City, State" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <select id="orgCity" required>
+                                <option value="">Select City</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Jaipur">Jaipur</option>
+                                <option value="Lucknow">Lucknow</option>
+                                <option value="Indore">Indore</option>
+                                <option value="Kochi">Kochi</option>
+                                <option value="Nagpur">Nagpur</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Surat">Surat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <select id="orgState" required>
+                                <option value="">Select State</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" id="orgCountry" placeholder="India" value="India" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" id="orgEmail" placeholder="contact@organization.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="tel" id="orgPhone" placeholder="9876543210" maxlength="10" pattern="[6-9][0-9]{9}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Register Organization</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Queues Modal -->
+    <div id="manageQueuesModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Manage Active Queues</h3>
+                <span class="modal-close" onclick="closeModal('manageQueuesModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="activeQueuesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Queue Modal -->
+    <div id="endQueueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>End Queue</h3>
+                <span class="modal-close" onclick="closeModal('endQueueModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="endQueueForm">
+                    <div class="form-group">
+                        <label>Queue Name</label>
+                        <input type="text" id="endQueueName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason for Ending Queue</label>
+                        <select id="endQueueReason" required>
+                            <option value="">Select Reason</option>
+                            <option value="end_of_day">End of Business Day</option>
+                            <option value="technical_issue">Technical Issue</option>
+                            <option value="emergency">Emergency</option>
+                            <option value="staff_unavailable">Staff Unavailable</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Details (Optional)</label>
+                        <textarea id="endQueueDetails" rows="3" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="notifyUsers" checked>
+                            <span>Notify all users in queue</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">End Queue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Request Notification (Organization) -->
+    <div id="queueRequestNotification" class="queue-request-popup" style="display: none;">
+        <div class="request-card">
+            <div class="request-header">
+                <i class="fas fa-user-clock"></i>
+                <h4>New Queue Request</h4>
+            </div>
+            <div class="request-body">
+                <p><strong>User:</strong> <span id="requestUserName"></span></p>
+                <p><strong>Phone:</strong> <span id="requestUserPhone"></span></p>
+                <p><strong>Queue:</strong> <span id="requestQueueName"></span></p>
+                <p><strong>Time:</strong> <span id="requestTime"></span></p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-primary" onclick="handleQueueRequest(true)">Accept</button>
+                <button class="btn btn-secondary" onclick="handleQueueRequest(false)">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Status Modal -->
+    <div id="userStatusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Queue Request Status</h3>
+                <span class="modal-close" onclick="closeModal('userStatusModal')">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 40px;">
+                <div id="statusIcon" style="font-size: 64px; margin-bottom: 20px;"></div>
+                <h3 id="statusTitle" style="margin-bottom: 15px;"></h3>
+                <p id="statusMessage" style="color: #6b7280; font-size: 16px;"></p>
+                <button class="btn btn-primary" onclick="closeModal('userStatusModal')" style="margin-top: 20px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purpose Modal -->
+    <div id="purposeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tell Us Your Purpose</h3>
+                <span class="modal-close" onclick="closeModal('purposeModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">To save time, briefly tell us what you need:</p>
+                <form id="purposeForm">
+                    <div class="form-group">
+                        <label>Select Service Type</label>
+                        <select id="serviceType" required onchange="updatePurposeOptions()">
+                            <option value="">Choose service...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brief Description (Optional)</label>
+                        <textarea id="purposeDescription" rows="3" placeholder="E.g., Need to update address, apply for new card, etc." style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Documents you have (Optional)</label>
+                        <input type="text" id="documents" placeholder="E.g., Aadhaar, PAN, Passport">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Submit & Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate QR Modal -->
+    <div id="generateQRModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Queue QR Code</h3>
+                <span class="modal-close" onclick="closeModal('generateQRModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="qrCodeContainer" style="text-align: center; margin: 20px 0;"></div>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">Users can scan this QR code to join the queue</p>
+                <button class="btn btn-primary btn-full" onclick="downloadQR()">Download QR Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Service Modal -->
+    <div id="completeServiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Complete Service</h3>
+                <span class="modal-close" onclick="closeModal('completeServiceModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 20px;">Patient: <strong id="completePatientName"></strong></p>
+                <div class="form-group">
+                    <label>Does patient need additional services?</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="completeWithoutHandoff()" style="flex: 1;">No, Complete</button>
+                        <button class="btn btn-primary" onclick="showHandoffOptions()" style="flex: 1;">Yes, Handoff</button>
+                    </div>
+                </div>
+                <div id="handoffOptions" style="display: none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label>Select Next Service</label>
+                        <select id="nextService" class="form-control">
+                            <option value="">Choose service...</option>
+                            <option value="Pharmacy">Pharmacy</option>
+                            <option value="Lab Tests">Lab Tests</option>
+                            <option value="X-Ray">X-Ray</option>
+                            <option value="Billing">Billing</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="completeWithHandoff()">Complete & Handoff</button>
                 </div>
             </div>
         </div>

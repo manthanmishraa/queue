@@ -12,6 +12,7 @@ let pendingRequest = null;
 let isOrganizationView = false;
 let currentServiceType = null;
 let userPurpose = null;
+let generatedQRData = null; // Store generated QR code data
 
 // Indian Data
 const INDIAN_CITIES = [
@@ -284,7 +285,7 @@ function updateLoginButton() {
         loginBtn.textContent = 'My Account';
         loginBtn.onclick = (e) => {
             e.preventDefault();
-            toggleProfileMenu();
+            showProfile();
         };
     } else if (loginBtn) {
         loginBtn.textContent = 'Login';
@@ -719,8 +720,8 @@ function handleAutoAccept() {
 
 // QR Code Functions
 function showQRScanModal() {
-    document.getElementById('qrScanModal').style.display = 'block';
-    startQRScanner();
+    // Generate a QR code for users to scan and join queue
+    generateQRCodeForUser();
 }
 
 function startQRScanner() {
@@ -748,15 +749,42 @@ function stopQRScanner() {
 
 function simulateQRScan() {
     // Simulate scanning a QR code
-    showNotification('QR Code detected! Sending request...', 'info');
+    showNotification('QR Code detected! Processing...', 'info');
     
     setTimeout(() => {
-        const randomService = generateIndianServices()[0];
+        // Use the generated QR data if available, otherwise use a random service
+        let service;
+        if (generatedQRData) {
+            service = {
+                id: generatedQRData.serviceId,
+                name: generatedQRData.serviceName,
+                type: generatedQRData.serviceType,
+                address: generatedQRData.address,
+                distance: generatedQRData.distance,
+                queues: generatedQRData.queues
+            };
+        } else {
+            const services = generateIndianServices();
+            service = services[0];
+        }
+        
+        // Close modal
         closeModal('qrScanModal');
-        selectedService = { id: randomService.id, name: randomService.name };
+        
+        // Set selected service
+        selectedService = { id: service.id, name: service.name, type: service.type };
         currentQueueId = 'Q' + Date.now();
-        sendQueueRequest(randomService.name);
-        showNotification('Request sent! Waiting for approval...', 'info');
+        currentServiceType = service.type;
+        
+        // For bank or government services, show purpose modal
+        if (service.type === 'bank' || service.type === 'government') {
+            showPurposeModal(service.type);
+        } else {
+            // For hospitals, directly proceed with queue request
+            proceedWithQueueRequest(service.name);
+        }
+        
+        showNotification('Connected to ' + service.name + '!', 'success');
     }, 1000);
 }
 
@@ -852,6 +880,48 @@ function generateQRCode(queueId, queueName) {
     });
     
     closeModal('manageQueuesModal');
+    document.getElementById('generateQRModal').style.display = 'block';
+}
+
+function generateQRCodeForUser() {
+    // Generate a QR code for users to scan and join a queue
+    const qrContainer = document.getElementById('qrCodeContainer');
+    qrContainer.innerHTML = '';
+    
+    // Get a random service to generate QR code for
+    const services = generateIndianServices();
+    const randomService = services[Math.floor(Math.random() * services.length)];
+    
+    // Generate QR code data with all service info
+    const qrData = {
+        type: 'user_queue',
+        serviceId: randomService.id,
+        serviceName: randomService.name,
+        serviceType: randomService.type,
+        address: randomService.address,
+        distance: randomService.distance,
+        queues: randomService.queues,
+        timestamp: Date.now(),
+        qrCode: 'SKIPIT_' + Date.now()
+    };
+    
+    // Store the QR data globally so it can be used when scanned
+    generatedQRData = qrData;
+    
+    // Create QR code with JSON string
+    new QRCode(qrContainer, {
+        text: JSON.stringify(qrData),
+        width: 256,
+        height: 256,
+        colorDark: '#2563eb',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Show success message
+    showNotification('QR Code generated! Users can scan to join queue.', 'success');
+    
+    // Show the generate QR modal
     document.getElementById('generateQRModal').style.display = 'block';
 }
 
@@ -958,7 +1028,6 @@ function requestSwap() {
     swapBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Requesting...';
 
     setTimeout(() => {
-        // Simulate swap - move position back by 1
         const newPos = currentPos + 1;
         document.getElementById('currentPosition').textContent = newPos;
         
@@ -974,7 +1043,6 @@ function requestSwap() {
         swapBtn.style.background = '#10b981';
         swapBtn.style.color = 'white';
         
-        // Disable swap button after use
         setTimeout(() => {
             swapBtn.disabled = true;
             swapBtn.innerHTML = '<i class="fas fa-check"></i> Already Swapped';
@@ -995,7 +1063,6 @@ function requestDelay() {
     delayBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
     setTimeout(() => {
-        // Move position back by 1
         const newPos = currentPos + 1;
         document.getElementById('currentPosition').textContent = newPos;
         
@@ -1011,13 +1078,12 @@ function requestDelay() {
         delayBtn.style.background = '#f59e0b';
         delayBtn.style.color = 'white';
         
-        // Re-enable after 2 minutes for another delay if needed
         setTimeout(() => {
             delayBtn.disabled = false;
             delayBtn.innerHTML = '<i class="fas fa-clock"></i> Push Me 1 Person Back';
             delayBtn.style.background = '';
             delayBtn.style.color = '';
-        }, 120000); // 2 minutes
+        }, 120000);
     }, 1500);
 }
 
@@ -1988,17 +2054,164 @@ function changeLanguageToHindi() {
     
     // Update hero section
     const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) heroTitle.textContent = 'कतार छोड़ें, अपना समय बचाएं';
+    if (heroTitle) heroTitle.textContent = 'प्रतीक्षा छोड़ें, सेवा नहीं।';
     
     const heroSubtitle = document.querySelector('.hero-subtitle');
-    if (heroSubtitle) heroSubtitle.textContent = 'भारत भर में बैंकों, अस्पतालों और सरकारी कार्यालयों में डिजिटल कतारों में शामिल हों। रियल-टाइम ट्रैकिंग, तत्काल सूचनाएं, और शून्य प्रतीक्षा परेशानी।';
+    if (heroSubtitle) heroSubtitle.textContent = 'भारत की अग्रणी डिजिटल कतार प्रबंधन प्लेटफॉर्म। बैंकों, अस्पतालों और सरकारी कार्यालयों में वर्चुअल कतारों में शामिल हों। रियल-टाइम ट्रैकिंग, तत्काल सूचनाएं, और शून्य भौतिक प्रतीक्षा।';
     
     // Update buttons
     const joinQueueBtn = document.querySelector('.hero-buttons .btn-primary');
     if (joinQueueBtn) joinQueueBtn.innerHTML = '<i class="fas fa-play-circle"></i> अभी कतार में शामिल हों';
     
-    const scanQRBtn = document.querySelector('.hero-buttons .btn-secondary');
-    if (scanQRBtn) scanQRBtn.innerHTML = '<i class="fas fa-qrcode"></i> QR कोड स्कैन करें';
+    // Update white box content (queue interface mockup)
+    const queueTitle = document.querySelector('.queue-interface h3');
+    if (queueTitle) queueTitle.textContent = 'आपकी कतार की स्थिति';
+    
+    const queueSubtitle = document.querySelector('.queue-interface p');
+    if (queueSubtitle) queueSubtitle.textContent = 'SBI बैंक - अंधेरी शाखा';
+    
+    const positionLabel = document.querySelector('.queue-position .label');
+    if (positionLabel) positionLabel.textContent = 'आपकी स्थिति:';
+    
+    const waitLabel = document.querySelector('.queue-wait .label');
+    if (waitLabel) waitLabel.textContent = 'अनुमानित प्रतीक्षा:';
+    
+    const progressText = document.querySelector('.progress-text');
+    if (progressText) progressText.textContent = 'आपसे पहले 4 लोग';
+    
+    const queueButtons = document.querySelectorAll('.queue-actions .btn');
+    if (queueButtons[0]) queueButtons[0].innerHTML = '<i class="fas fa-times"></i> कतार छोड़ें';
+    if (queueButtons[1]) queueButtons[1].innerHTML = '<i class="fas fa-refresh"></i> रिफ्रेश करें';
+    
+    // Update feature cards
+    const featureCards = document.querySelectorAll('.feature-card');
+    const hindiFeatures = [
+        {
+            title: 'रियल-टाइम ट्रैकिंग',
+            description: 'अपनी कतार की स्थिति को लाइव देखें और सटीक प्रतीक्षा समय जानें।'
+        },
+        {
+            title: 'तत्काल सूचनाएं',
+            description: 'SMS और ऐप नोटिफिकेशन के माध्यम से अपडेट प्राप्त करें।'
+        },
+        {
+            title: 'स्मार्ट शेड्यूलिंग',
+            description: 'AI-संचालित समय अनुमान के साथ अपनी यात्रा की योजना बनाएं।'
+        },
+        {
+            title: 'मल्टी-लोकेशन सपोर्ट',
+            description: 'भारत भर के हजारों स्थानों पर उपलब्ध सेवाएं।'
+        }
+    ];
+    
+    featureCards.forEach((card, index) => {
+        if (hindiFeatures[index]) {
+            const title = card.querySelector('h4');
+            const description = card.querySelector('p');
+            if (title) title.textContent = hindiFeatures[index].title;
+            if (description) description.textContent = hindiFeatures[index].description;
+        }
+    });
+    
+    // Update how it works steps
+    const stepCards = document.querySelectorAll('.step-card');
+    const hindiSteps = [
+        {
+            title: 'स्थान खोजें',
+            description: 'अपने नजदीकी बैंक, अस्पताल या सरकारी कार्यालय खोजें।'
+        },
+        {
+            title: 'कतार में शामिल हों',
+            description: 'QR कोड स्कैन करें या ऐप के माध्यम से वर्चुअल कतार में शामिल हों।'
+        },
+        {
+            title: 'ट्रैक करें',
+            description: 'रियल-टाइम में अपनी स्थिति और प्रतीक्षा समय देखें।'
+        },
+        {
+            title: 'सेवा प्राप्त करें',
+            description: 'सही समय पर पहुंचें और तुरंत सेवा प्राप्त करें।'
+        }
+    ];
+    
+    stepCards.forEach((card, index) => {
+        if (hindiSteps[index]) {
+            const title = card.querySelector('h4');
+            const description = card.querySelector('p');
+            if (title) title.textContent = hindiSteps[index].title;
+            if (description) description.textContent = hindiSteps[index].description;
+        }
+    });
+    
+    // Update benefits cards
+    const benefitCards = document.querySelectorAll('.benefit-card');
+    const hindiBenefits = [
+        {
+            title: 'समय की बचत',
+            description: 'भौतिक कतारों में खड़े होने की आवश्यकता नहीं। अपना समय बचाएं।'
+        },
+        {
+            title: 'सुविधा',
+            description: 'कहीं से भी कतार में शामिल हों और अपनी स्थिति ट्रैक करें।'
+        },
+        {
+            title: 'पारदर्शिता',
+            description: 'वास्तविक समय की जानकारी और सटीक प्रतीक्षा समय अनुमान।'
+        }
+    ];
+    
+    benefitCards.forEach((card, index) => {
+        if (hindiBenefits[index]) {
+            const title = card.querySelector('h4');
+            const description = card.querySelector('p');
+            if (title) title.textContent = hindiBenefits[index].title;
+            if (description) description.textContent = hindiBenefits[index].description;
+        }
+    });
+    
+    // Update section titles
+    const sectionTitles = document.querySelectorAll('.section-title');
+    const hindiTitles = [
+        'भारत भर में उपलब्ध सेवाएं',
+        '4 आसान चरणों में कैसे काम करता है',
+        'SKIPIT क्यों चुनें?',
+        'हर उद्योग के लिए समाधान',
+        'ऑल-इन-वन कतार प्रबंधन समाधान',
+        'अग्रणी संगठनों द्वारा भरोसेमंद',
+        'एंटरप्राइज़-ग्रेड सुरक्षा और अनुपालन',
+        'सरल, पारदर्शी मूल्य निर्धारण',
+        'AI-संचालित व्यावसायिक बुद्धिमत्ता',
+        'अपना ROI गणना करें',
+        'प्रतीक्षा लाइनों को समाप्त करने के लिए तैयार?'
+    ];
+    
+    sectionTitles.forEach((title, index) => {
+        if (hindiTitles[index]) {
+            title.textContent = hindiTitles[index];
+        }
+    });
+    
+    // Update footer
+    const footerLinks = document.querySelectorAll('.footer-links a');
+    if (footerLinks[0]) footerLinks[0].textContent = 'होम';
+    if (footerLinks[1]) footerLinks[1].textContent = 'सेवाएं';
+    if (footerLinks[2]) footerLinks[2].textContent = 'हमारे बारे में';
+    if (footerLinks[3]) footerLinks[3].textContent = 'गोपनीयता';
+    if (footerLinks[4]) footerLinks[4].textContent = 'नियम';
+    
+    const footerBottom = document.querySelector('.footer-bottom p');
+    if (footerBottom) footerBottom.textContent = '©SKIPIT. सभी अधिकार सुरक्षित।';
+    
+    // Update CTA section
+    const ctaTitle = document.querySelector('.cta-content h2');
+    if (ctaTitle) ctaTitle.textContent = 'प्रतीक्षा लाइनों को समाप्त करने के लिए तैयार?';
+    
+    const ctaSubtitle = document.querySelector('.cta-content p');
+    if (ctaSubtitle) ctaSubtitle.textContent = 'आज ही अपना निःशुल्क 14-दिन का परीक्षण शुरू करें। कोई क्रेडिट कार्ड आवश्यक नहीं।';
+    
+    const ctaButtons = document.querySelectorAll('.cta-buttons .btn');
+    if (ctaButtons[0]) ctaButtons[0].innerHTML = '<i class="fas fa-play-circle"></i> निःशुल्क परीक्षण शुरू करें';
+    if (ctaButtons[1]) ctaButtons[1].innerHTML = '<i class="fas fa-phone"></i> बिक्री से संपर्क करें';
 }
 
 function changeLanguageToEnglish() {
